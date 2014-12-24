@@ -34,7 +34,7 @@ public class Team {
 		return division;
 	}
 
-	// Something to save
+	// Something to save more
 	private static int teamsCreated ; 
 	public static Team CreateExampleTeam(int year, DayOfTheWeek night) {
 		Person man = Person.createExampleMan(teamsCreated) ; 
