@@ -6,7 +6,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Schedule</title>
-</head>
+<%@ include file="html\\TopMenu.html" %>
+<script> document.getElementById("scheduleLink").style.background = "Gray" ; </script></head>
+<body>
+
 <body>
 <h1>Monday </h1>
 <%@ page import="java.util.*" %>
