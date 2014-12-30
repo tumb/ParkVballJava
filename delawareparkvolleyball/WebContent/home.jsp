@@ -9,8 +9,10 @@
 html {
     background-image: url("images\\BobAndSarah1.jpg") ;
     /* Adding center center is killing the image */
-    width: 50% ; 
-    height: 50% ; 
+    background-attachment: fixed; 
+	background-repeat: no-repeat; 
+	-moz-background-size:100% 100%; 
+    background-size: 100% 100% ; 
 }
 </style>
 <h1>Teams</h1>
