@@ -11,8 +11,9 @@ html {
     /* Adding center center is killing the image */
     background-attachment: fixed; 
 	background-repeat: no-repeat; 
-	-moz-background-size:100% 100%; 
-    background-size: 100% 100% ; 
+	-moz-background-size: auto 100%; 
+    background-size: auto 100% ;
+    background-position: center center ; 
 }
 </style>
 <h1>Teams</h1>
