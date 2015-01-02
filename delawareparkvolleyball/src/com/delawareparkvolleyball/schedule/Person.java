@@ -3,7 +3,7 @@ package com.delawareparkvolleyball.schedule;
 public class Person {
 	private String firstName ; 
 	private String lastName ; 
-	private String[] aliases ; 
+	private boolean isMale ; 
 	
 	private static Person[] MEN ;
 	private static Person[] WOMEN ; 
@@ -11,6 +11,12 @@ public class Person {
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName ; 
 		this.lastName = lastName ; 
+	}
+
+	public Person(String firstName, String lastName, String gender) {
+		this.firstName = firstName ; 
+		this.lastName = lastName ; 
+		this.isMale = "M".equalsIgnoreCase(gender) ;
 	}
 
 	public String getFirstName() {
