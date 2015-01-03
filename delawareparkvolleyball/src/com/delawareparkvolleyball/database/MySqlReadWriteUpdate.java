@@ -42,7 +42,11 @@ public class MySqlReadWriteUpdate {
 			Statement selectStatement = connection.createStatement() ;
 			ResultSet selectResultSet = selectStatement.executeQuery(selectSql) ; 
 			while(selectResultSet.next()) {
-				System.out.println(selectResultSet.getString(1)) ; 
+				String matchResult = selectResultSet.getString(1) ; 
+				matchResult += " vs " + selectResultSet.getString(2) ;
+				matchResult += ": " + selectResultSet.getInt(3)+ "-" + selectResultSet.getInt(4) ;
+				
+				System.out.println(matchResult) ; 
 			}
 		} catch (SQLException sqlException) {
 			// TODO Auto-generated catch block

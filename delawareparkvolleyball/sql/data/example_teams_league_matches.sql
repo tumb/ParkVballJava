@@ -63,7 +63,7 @@ insert into match_result (play_date, team_A_id, team_B_id, league_id, team_A_win
 values ('2014-07-31', 8, 6, 1, 0, 2) ; 
 
 insert into match_result (play_date, team_A_id, team_B_id, league_id, team_A_wins, team_B_wins) 
-values ('2014-07-31', 8, 9, 1, 0, 9) ; 
+values ('2014-07-31', 8, 9, 1, 0, 2) ; 
 
 insert into match_result (play_date, team_A_id, team_B_id, league_id, team_A_wins, team_B_wins) 
 values ('2014-07-31', 9, 4, 1, 0, 2) ; 
