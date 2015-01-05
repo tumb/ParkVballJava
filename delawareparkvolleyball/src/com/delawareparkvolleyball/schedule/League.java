@@ -10,6 +10,7 @@ public class League {
 	private int year ; 
 	private DayOfTheWeek night ; 
 	private ArrayList<Team> allTeams ;
+//	private int id ; // The id assigned in the database. Used for matching results. ; 
 	
 	public static League CreateExampleLeague(int teamCount) {
 		ArrayList<Team> teams = new ArrayList<Team>(teamCount) ;
