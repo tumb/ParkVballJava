@@ -11,6 +11,17 @@
 <body>
 
 <body>
+<style>
+html {
+    background-image: url("images\\JamieAndJon1.jpg") ;
+    /* Adding center center is killing the image */
+    background-attachment: fixed; 
+	background-repeat: no-repeat; 
+	-moz-background-size: auto 100%; 
+    background-size: auto 100% ;
+    background-position: center center ; 
+}
+</style>
 <h1>Monday </h1>
 <%@ page import="java.util.*" %>
 <h2>Time on server: <%= new Date() %></h2>
