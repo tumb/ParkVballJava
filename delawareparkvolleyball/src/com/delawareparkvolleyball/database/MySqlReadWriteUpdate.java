@@ -45,7 +45,7 @@ public class MySqlReadWriteUpdate {
 		League league = fetchLeague(leagueId);
 		ArrayList<Team> allTeams = league.getAllTeams();
 		ArrayList<MatchResult> allMatchResults = fetchAllResults(leagueId, league) ; 
-		String html = "<table border=\"1\">\n";
+		String html = "<table border=\"1\" style=\"border-collapse:collapse; border-color:#884444\" >\n";
 		int teamCount = allTeams.size();
 		for (int i = 0; i < teamCount; i++) {
 			Team team = allTeams.get(i) ; 
@@ -57,9 +57,9 @@ public class MySqlReadWriteUpdate {
 			}
 
 			// html += "\t<tr> " ; //TODO: use datatables.net jquery plugin
-			html += "\t\t<td>" + allTeams.get(i).getMan().getFirstName()
-					+ "</td>";
 			html += "\t\t<td>" + allTeams.get(i).getWoman().getFirstName()
+					+ "</td>";
+			html += "\t\t<td>" + allTeams.get(i).getMan().getFirstName()
 					+ "</td>";
 			html += "\t\t<td>" + winsAndLosses[0] 
 					+ "</td>";
