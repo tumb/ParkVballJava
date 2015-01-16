@@ -28,3 +28,5 @@ insert into dpva.person (first_name, last_name, gender) values ('Hector', 'Carri
 insert into dpva.person (first_name, last_name, gender) values ('Scott', 'Grayson', 'M') ; 
 insert into dpva.person (first_name, last_name, gender) values ('Nick', 'Daigle', 'M') ; 
 insert into dpva.person (first_name, last_name, gender) values ('Aidan', 'Ngin', 'M') ; 
+
+select * from dpva.person order by last_name asc ; 

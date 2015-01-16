@@ -22,9 +22,11 @@ html {
     background-position: center center ; 
 }
 </style>
-<h1>Monday </h1>
-<%@ page import="java.util.*" %>
-<h2>Time on server: <%= new Date() %></h2>
+<h1>Thursday Schedule</h1>
 
+<%@ page import="com.delawareparkvolleyball.view.*" %>
+<p>
+<%= HtmlGeneration.htmlOfSchedule(1) %>
+</p>
 </body>
 </html>

@@ -8,12 +8,21 @@ public class Team {
 	private int year ; 
 	private DayOfTheWeek night ; 
 	private Division division ; 
+	private String teamName ; // The name to appear on schedule. Usually woman's first name.
 	
 	public Team(Person man, Person woman, int year, DayOfTheWeek night) {
 		this.man = man ; 
 		this.woman = woman ; 
 		this.year = year ; 
 		this.night = night ; 
+	}
+
+	public Team(Person man, Person woman, String teamName, int year, DayOfTheWeek night) {
+		this.man = man ; 
+		this.woman = woman ; 
+		this.year = year ; 
+		this.night = night ; 
+		this.teamName = teamName ; 
 	}
 
 	/**
@@ -26,6 +35,10 @@ public class Team {
 	public Team(String womanFirstName, String womanLastName, String manFirstName, String manLastName) {
 		this.man   = new Person(manFirstName, manLastName, "M") ; 
 		this.woman = new Person(womanFirstName, womanLastName, "F") ; 
+	}
+	
+	public Team(String teamName) {
+		this.teamName = teamName ; 
 	}
 	
 	public Person getMan() {
@@ -46,6 +59,10 @@ public class Team {
 
 	public Division getDivision() {
 		return division;
+	}
+	
+	public String getTeamName() {
+		return teamName ; 
 	}
 
 	

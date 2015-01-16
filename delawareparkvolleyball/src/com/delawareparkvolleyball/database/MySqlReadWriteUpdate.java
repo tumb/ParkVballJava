@@ -13,7 +13,9 @@ import com.delawareparkvolleyball.schedule.DayOfTheWeek;
 import com.delawareparkvolleyball.schedule.League;
 import com.delawareparkvolleyball.schedule.MatchResult;
 import com.delawareparkvolleyball.schedule.Person;
+import com.delawareparkvolleyball.schedule.Schedule;
 import com.delawareparkvolleyball.schedule.Team;
+import com.delawareparkvolleyball.view.HtmlGeneration;
 
 public class MySqlReadWriteUpdate {
 
@@ -46,6 +48,7 @@ public class MySqlReadWriteUpdate {
 		ArrayList<Team> allTeams = league.getAllTeams();
 		ArrayList<MatchResult> allMatchResults = fetchAllResults(leagueId, league) ; 
 		String html = "<table border=\"1\" style=\"border-collapse:collapse; border-color:#884444\" >\n";
+		html += HtmlGeneration.generateStandingsHeader(null) ;
 		int teamCount = allTeams.size();
 		for (int i = 0; i < teamCount; i++) {
 			Team team = allTeams.get(i) ; 
@@ -96,7 +99,7 @@ public class MySqlReadWriteUpdate {
 		return winsAndLosses ;
 	}
 
-	private static ArrayList<MatchResult> fetchAllResults(int leagueId, League league) {
+	public static ArrayList<MatchResult> fetchAllResults(int leagueId, League league) {
 		ArrayList<MatchResult> allMatches = new ArrayList<MatchResult>() ; 
 		Connection connection = fetchConnection();
 		try {
@@ -138,7 +141,7 @@ public class MySqlReadWriteUpdate {
 		return allMatches ; 
 	}
 
-	private static League fetchLeague(int leagueId) {
+	public static League fetchLeague(int leagueId) {
 		League league = null;
 		Connection connection = fetchConnection();
 		ResultSet leagueResultSet = null;
@@ -170,25 +173,13 @@ public class MySqlReadWriteUpdate {
 				String womanFirstName = teamsResultSet
 						.getString("pf.first_name");
 				String womanLastName = teamsResultSet.getString("pf.last_name");
-				String womanGender = teamsResultSet.getString("pf.gender"); // True
-																			// this
-																			// better
-																			// be
-																			// F
-																			// for
-																			// female.
+				String womanGender = teamsResultSet.getString("pf.gender"); 
 				Person woman = new Person(womanFirstName, womanLastName,
 						womanGender);
 
 				String manFirstName = teamsResultSet.getString("pm.first_name");
 				String manLastName = teamsResultSet.getString("pm.last_name");
-				String manGender = teamsResultSet.getString("pm.gender"); // True
-																			// this
-																			// better
-																			// be
-																			// F
-																			// for
-																			// female.
+				String manGender = teamsResultSet.getString("pm.gender"); 
 				Person man = new Person(manFirstName, manLastName, manGender);
 				Team team = new Team(man, woman, year, day_of_the_week);
 				allTeams.add(team);
@@ -228,6 +219,37 @@ public class MySqlReadWriteUpdate {
 			// TODO Auto-generated catch block
 			sqlException.printStackTrace();
 		}
+	}
+
+	public static ArrayList<Schedule> fetchAllScheduledMatches(int leagueId,
+			League league) {
+		ArrayList<Schedule> allSchedules = new ArrayList<Schedule>() ; 
+		Connection connection = fetchConnection();
+		try {
+			// Now get all the teams;
+			String selectSchedulesSql = " select ta.team_name, tb.team_name, s.play_date  ";
+			selectSchedulesSql += " from dpva.schedule s ";
+			selectSchedulesSql += " join team ta on ta.id = s.team_A_id ";
+			selectSchedulesSql += " join team tb on tb.id = s.team_B_id ";
+			selectSchedulesSql += " where s.league_id = " + leagueId + " ;";
+			Statement schedulesStatement = connection.createStatement();
+			ResultSet schedulesResultSet = schedulesStatement.executeQuery(selectSchedulesSql);
+			while (schedulesResultSet.next()) {
+				Date date = schedulesResultSet.getDate("s.play_date") ;
+				String teamAName = schedulesResultSet.getString("ta.team_name") ;
+				String teamBName = schedulesResultSet.getString("tb.team_name") ;
+				Team aTeam = new Team(teamAName) ; 
+				Team bTeam = new Team(teamBName) ;
+				Schedule matchResult = new Schedule(aTeam, bTeam, league, 0, date) ;
+				allSchedules.add(matchResult) ; 
+			}
+		} catch (SQLException sqlException) {
+			String message = "\nFailed to fetch schedules. " ;
+			message += "sqlException message: \n" + sqlException.getMessage() ;
+			System.out.println(message) ;
+			sqlException.printStackTrace();
+		}
+		return allSchedules ; 
 	}
 
 }

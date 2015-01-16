@@ -66,6 +66,12 @@ public String containsTeam(Team team) {
 	return match ;
 }
 
+public boolean containsBoth(Team teamA2, Team teamB2) {
+	boolean containsBoth = this.teamA.equals(teamA2) || this.teamB.equals(teamA2) ;
+	containsBoth = containsBoth && (this.teamA.equals(teamB2) || this.teamB.equals(teamB2)) ;
+	return containsBoth ;
+}
+
  
  
 }
