@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.delawareparkvolleyball.schedule.DayOfTheWeek;
 import com.delawareparkvolleyball.schedule.League;
@@ -84,7 +86,7 @@ public class MySqlReadWriteUpdate {
 	private static int[] computeWinsAndLosses(Team team,
 			ArrayList<MatchResult> allMatchResults) {
 		int[] winsAndLosses = new int[2] ; // 0 is wins, 1 is losses.
-		for (Iterator iterator = allMatchResults.iterator(); iterator.hasNext();) {
+		for (Iterator<MatchResult> iterator = allMatchResults.iterator(); iterator.hasNext();) {
 			MatchResult matchResult = (MatchResult) iterator.next();
 			String containsTeam = matchResult.containsTeam(team) ; 
 			if("A".equalsIgnoreCase(containsTeam)) {
@@ -135,7 +137,6 @@ public class MySqlReadWriteUpdate {
 				allMatches.add(matchResult) ; 
 			}
 		} catch (SQLException sqlException) {
-			// TODO Auto-generated catch block
 			sqlException.printStackTrace();
 		}
 		return allMatches ; 
@@ -186,13 +187,34 @@ public class MySqlReadWriteUpdate {
 			}
 			league = new League(allTeams, year, day_of_the_week);
 		} catch (SQLException sqlException) {
-			// TODO Auto-generated catch block
 			sqlException.printStackTrace();
 		}
 
 		return league;
 	}
 
+	public static ArrayList<Person> fetchAllPeopleInDatabase() {
+		Connection connection = fetchConnection();
+		ResultSet personResultSet = null;
+		String selectSql = "select id, first_name, last_name, gender from dpva.person " ;
+		ArrayList<Person> allPeople = new ArrayList<Person>(100);
+		try {
+			Statement personStatement = connection.createStatement();
+			personResultSet = personStatement.executeQuery(selectSql);
+			while (personResultSet.next()) {
+				String firstName = personResultSet.getString("first_name");
+				String lastName = personResultSet.getString("last_name");
+				String gender = personResultSet.getString("gender");
+				int id = personResultSet.getInt("id") ;
+				Person person = new Person(id, firstName, lastName, gender);
+				allPeople.add(person);
+			}
+		} catch (SQLException sqlException) {
+			sqlException.printStackTrace();
+		}
+		return allPeople ;		
+	}
+	
 	public static void main(String[] arguments) {
 		System.out.println(htmlOfStandings(1));
 
@@ -216,7 +238,6 @@ public class MySqlReadWriteUpdate {
 				System.out.println(matchResult);
 			}
 		} catch (SQLException sqlException) {
-			// TODO Auto-generated catch block
 			sqlException.printStackTrace();
 		}
 	}
@@ -250,6 +271,63 @@ public class MySqlReadWriteUpdate {
 			sqlException.printStackTrace();
 		}
 		return allSchedules ; 
+	}
+
+	/**
+	 * insert into dpva.league (day_of_week, year) values ('Thursday', 2014) ;
+	 * @param dayOfWeek
+	 * @param year
+	 * @param divisionCount
+	 */
+	public static void createNewLeague(String dayOfWeek, int year, int divisionCount) {
+		String insertSql = "insert into dpva.league (day_of_week, year) values (" ;
+		insertSql += "'" + dayOfWeek + "', " ;
+		insertSql += year ;
+//		insertSql += year + ", " ; // division not yet implemented.
+		insertSql += ") " ;
+		executeInsertStatement(insertSql) ; 
+	}
+
+	private static int executeInsertStatement(String insertSql) {
+		Connection connection = fetchConnection();
+		int resultingId = -1 ; 
+		
+		try {
+			Statement statement = connection.createStatement() ;
+			statement.execute(insertSql, Statement.RETURN_GENERATED_KEYS) ;
+			ResultSet keyResultSet = statement.getGeneratedKeys() ;
+			keyResultSet.next() ; 
+			resultingId = keyResultSet.getInt(1) ; // not currently working 
+		} catch (SQLException sqlException) {
+			System.out.println(sqlException.getMessage()) ;
+			sqlException.printStackTrace() ;
+		} 
+		return resultingId ; 
+	}
+
+	public static int insertPerson(Person person) {
+		String insertSql = "insert into dpva.person(first_name, last_name, gender) values (" ;
+		insertSql += "'" + person.getFirstName() + "', " ;
+		insertSql += "'" + person.getLastName()  + "', " ;
+		String genderString = "'F'" ; 
+		if(person.isMale()) {
+			genderString = "'M'" ; 
+		}
+		insertSql += genderString ;
+		insertSql += ") " ;
+		int id = executeInsertStatement(insertSql) ;
+		return id ; 
+	}
+
+	public static int insertNewTeam(int league, Person man, Person woman, String teamName) {
+		String insertSql = "insert into dpva.team(league_id, man_id, woman_id, team_name) values (" ;
+		insertSql += league + ", " ; 
+		insertSql += man.getId() + ", " ; 
+		insertSql += woman.getId() + ", " ; 
+		insertSql += "'" + teamName + "'" ;
+		insertSql += ") " ;
+		int id = executeInsertStatement(insertSql) ;
+		return id ; 
 	}
 
 }
