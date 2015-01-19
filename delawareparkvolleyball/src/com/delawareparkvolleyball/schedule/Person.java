@@ -4,6 +4,7 @@ public class Person {
 	private String firstName ; 
 	private String lastName ; 
 	private boolean isMale ; 
+	int id ; // The database id
 	
 	private static Person[] MEN ;
 	private static Person[] WOMEN ; 
@@ -19,12 +20,31 @@ public class Person {
 		this.isMale = "M".equalsIgnoreCase(gender) ;
 	}
 
+	public Person(int id, String firstName, String lastName, String gender) {
+		this.id = id ; 
+		this.firstName = firstName ; 
+		this.lastName = lastName ; 
+		this.isMale = "M".equalsIgnoreCase(gender) ;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
 
 	public String getLastName() {
 		return lastName;
+	}
+	
+	public void setId(int id) {
+		this.id = id ; 
+	}
+	
+	public int getId() {
+		return this.id ; 
+	}
+	
+	public boolean isMale() {
+		return this.isMale ; 
 	}
 	
 	@Override
@@ -40,7 +60,6 @@ public class Person {
 		int result = 1;
 		result = prime * result
 				+ ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + (isMale ? 1231 : 1237);
 		result = prime * result
 				+ ((lastName == null) ? 0 : lastName.hashCode());
 		return result;
@@ -60,14 +79,12 @@ public class Person {
 				return false;
 		} else if (!firstName.equals(other.firstName))
 			return false;
-		if (isMale != other.isMale)
-			return false;
 		if (lastName == null) {
 			if (other.lastName != null)
 				return false;
 		} else if (!lastName.equals(other.lastName))
 			return false;
-		return true;
+		return true ;
 	}
 
 	public static Person createExampleMan(int teamsCreated) {
