@@ -66,4 +66,44 @@ public class HtmlGeneration {
 
 		return html ; 
 	}
+	/**
+	 * <table> 
+	<tr><td><input type="radio" name="league" value="Monday">Monday</td><td>2015</td><tr>
+	<tr><td><input type="radio" name="league" value="Thursday">Thursday</td><tr>
+		</table>
+	 * @return
+	 */
+	public static String leagueSelection() {
+		ArrayList<League> allLeagues = MySqlReadWriteUpdate.fetchLeagueList() ;
+		String rowStart = "<tr><td><input type=\"radio\" name=\"league\" value=\"" ; 
+		String rowPart2 = "\">" ; 
+		String rowPart3 = "</td><td>" ; 
+		String rowEnd = "</td><tr>" ; 
+		
+		String html = "\n<table> " ; 
+		for (League league : allLeagues) {
+			String day = league.getNight().toString() ;
+			int year = league.getYear() ; 
+			html += rowStart + league.getId() + rowPart2 + day + rowPart3 + year + rowEnd ; 
+		}
+		html += "\n</table>" ; 
+		return html ; 
+	}
+	
+	public static String matchResultEditTable(String leagueIdAsString) {
+		int leagueId = Integer.parseInt(leagueIdAsString) ;
+		League league = MySqlReadWriteUpdate.fetchLeague(leagueId) ;
+		ArrayList<Schedule> scheduledMatches = MySqlReadWriteUpdate.fetchAllScheduledMatches(leagueId, league) ;
+		String html = "" ; 
+		String rowStart = "<tr><td>" ; 
+		String afterTeamA = "</td><td><input type=\"text\" name=\"teamAWins\" /><td>" ; 
+		String rowEnd = "</td><td><input type=\"text\" name=\"teamBWins\" /></td><tr>" ; 
+		for (Schedule schedule : scheduledMatches) {
+			html += rowStart + schedule.getTeamA().getTeamName() ;
+			html += afterTeamA + schedule.getTeamB().getTeamName() ;
+			html += rowEnd ; 
+		}
+		
+		return html ; 
+	}
 }

@@ -330,4 +330,30 @@ public class MySqlReadWriteUpdate {
 		return id ; 
 	}
 
+	public static ArrayList<League> fetchLeagueList() {
+		ArrayList<League> allLeagues = new ArrayList<League>() ;
+		Connection connection = fetchConnection();
+		ResultSet leagueResultSet = null;
+		String selectSql = "select id, day_of_week, year from dpva.league " ;
+		try {
+			Statement leagueStatement = connection.createStatement();
+			leagueResultSet = leagueStatement.executeQuery(selectSql);
+			while (leagueResultSet.next()) {
+				DayOfTheWeek day_of_the_week = DayOfTheWeek.MONDAY ; 
+				String day = leagueResultSet.getString("day_of_week");
+				if (DayOfTheWeek.THURSDAY.toString().equals(day)) {
+					day_of_the_week = DayOfTheWeek.THURSDAY;
+				}
+				
+				int year = leagueResultSet.getInt("year");
+				int id = leagueResultSet.getInt("id") ; 
+				allLeagues.add( new League(id, year, day_of_the_week));
+			}
+		} catch (SQLException sqlException) {
+			sqlException.printStackTrace();
+		}
+
+		return allLeagues ;
+	}
+
 }

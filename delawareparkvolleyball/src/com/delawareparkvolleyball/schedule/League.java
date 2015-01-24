@@ -10,7 +10,7 @@ public class League {
 	private int year ; 
 	private DayOfTheWeek night ; 
 	private ArrayList<Team> allTeams ;
-//	private int id ; // The id assigned in the database. Used for matching results. ; 
+	private int id ; // The id assigned in the database. Used for display. ; 
 	
 	public static League CreateExampleLeague(int teamCount) {
 		ArrayList<Team> teams = new ArrayList<Team>(teamCount) ;
@@ -28,12 +28,28 @@ public class League {
 		this.year = year ;
 		this.night = night ; 
 	}
+	/**
+	 * For display purposes
+	 * @param year2
+	 * @param day_of_the_week
+	 */
+	public League(int id, int year, DayOfTheWeek day_of_the_week) {
+		this.year = year ; 
+		this.night = day_of_the_week ; 
+		this.id = id ; 
+	}
+
 	public int getYear() {
 		return year;
 	}
 	public DayOfTheWeek getNight() {
 		return night;
 	}
+	
+	public int getId() {
+		return this.id ;
+	}
+	
 	public ArrayList<Team> getAllTeams() {
 		return allTeams;
 	}
