@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import com.delawareparkvolleyball.schedule.DayOfTheWeek;
 import com.delawareparkvolleyball.schedule.League;
@@ -185,7 +183,7 @@ public class MySqlReadWriteUpdate {
 				Team team = new Team(man, woman, year, day_of_the_week);
 				allTeams.add(team);
 			}
-			league = new League(allTeams, year, day_of_the_week);
+			league = new League(leagueId, allTeams, year, day_of_the_week);
 		} catch (SQLException sqlException) {
 			sqlException.printStackTrace();
 		}
@@ -356,4 +354,58 @@ public class MySqlReadWriteUpdate {
 		return allLeagues ;
 	}
 
+	/**
+	 * This method assumes that only the teamName in the team object is 
+	 * correctly filled in. 
+	 * @param matchesInRequest
+	 */
+	public static void saveMatches(ArrayList<MatchResult> matchesInRequest) {
+		for (Iterator<MatchResult> matchIterator = matchesInRequest.iterator(); matchIterator
+				.hasNext();) {
+			MatchResult matchResult =  matchIterator.next();
+			if(matchResult.containsWins()) {
+				insertMatchResult(matchResult) ;
+			}
+		}
+	}
+
+	private static int insertMatchResult(MatchResult matchResult) {
+		String insertSql = "insert into dpva.match_result(play_date, league_id, team_A_id, team_B_id, team_A_wins, team_B_wins) values (" ;
+		insertSql += "current_date()" + ", " ; 
+		insertSql += matchResult.getLeague().getId() + ", " ; 
+		insertSql += matchResult.getTeamA().getTeamId() + ", " ; 
+		insertSql += matchResult.getTeamB().getTeamId() + ", " ; 
+		insertSql += matchResult.getTeamAwins() + ", " ; 
+		insertSql += matchResult.getTeamBwins() ; 
+		insertSql += ") " ;
+		System.out.println("insertSql: " + insertSql) ; 
+		int id = executeInsertStatement(insertSql) ;
+		return id ; 
+	}
+
+	public static Team fetchTeam(String teamName, int leagueId) {
+		Team team = null ; 
+		Connection connection = fetchConnection();
+		ResultSet teamResultSet = null;
+		String selectSql = "select id, man_id, woman_id from dpva.team " ; 
+		selectSql += " where league_id = " + leagueId ;
+		selectSql += " and team_name = '" + teamName + "'" ; 
+		// Maybe fetch and create the entire person - someday. 
+		System.out.println("fetchTeam sql: " + selectSql) ;
+		try {
+			Statement fetchTeamStatement = connection.createStatement();
+			teamResultSet = fetchTeamStatement.executeQuery(selectSql);
+			teamResultSet.next() ; // Should only get one team.
+			int teamId = teamResultSet.getInt("id") ;
+			int manId = teamResultSet.getInt("man_id") ;
+			int womanId = teamResultSet.getInt("woman_id") ;
+			team = new Team(teamId, leagueId, manId, womanId, teamName) ; 
+			System.out.println("team: " + team) ;
+		}
+		catch(SQLException sqlException) {
+			System.out.println("Sql error in fetchTeam(). Message: " + sqlException.getMessage()) ;
+		}
+		return team ; 
+	}
+	
 }
