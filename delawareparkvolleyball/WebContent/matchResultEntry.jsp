@@ -23,16 +23,17 @@ html {
 <body>
 <form action="ResultEditor" method="GET">
 <p>
-<%= HtmlGeneration.leagueSelection() %>
+<%=HtmlGeneration.makeLeagueSelectionTable(request.getSession())%>
 </p>
 <input type="submit" name="selectLeague" value="Select League" />
 </form>
 <form action="ResultEditor" method="POST">
-<p>
+<h1>
+<%= HtmlGeneration.getSessionLeagueName(request.getSession()) %>
+</h1>
 <table>
-<%= HtmlGeneration.matchResultEditTable(request.getSession().getAttribute("leagueId").toString()) %>
+<%= HtmlGeneration.matchResultEditTable(request.getSession()) %>
 </table>
-</p>
 <input type="submit" name="saveResults" value="Save Results" />
 </form>
 </body>

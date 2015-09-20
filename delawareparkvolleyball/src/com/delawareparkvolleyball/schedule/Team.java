@@ -1,6 +1,5 @@
 package com.delawareparkvolleyball.schedule;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 public class Team {
 	private Person man ; 
@@ -9,7 +8,23 @@ public class Team {
 	private DayOfTheWeek night ; 
 	private Division division ; 
 	private String teamName ; // The name to appear on schedule. Usually woman's first name.
+	private int teamId ; // the id in the database. User should never see.
+	private int leagueId ; 
+	private int manId ; 
+	private int womanId ; 
 	
+	public int getLeagueId() {
+		return leagueId;
+	}
+
+	public int getManId() {
+		return manId;
+	}
+
+	public int getWomanId() {
+		return womanId;
+	}
+
 	public Team(Person man, Person woman, int year, DayOfTheWeek night) {
 		this.man = man ; 
 		this.woman = woman ; 
@@ -41,6 +56,14 @@ public class Team {
 		this.teamName = teamName ; 
 	}
 	
+	public Team(int teamId, int leagueId, int manId, int womanId, String teamName) {
+		this.teamName = teamName ; 
+		this.teamId = teamId ; 
+		this.leagueId = leagueId ; 
+		this.manId = manId ; 
+		this.womanId = womanId ; 
+	}
+
 	public Person getMan() {
 		return man;
 	}
@@ -65,7 +88,9 @@ public class Team {
 		return teamName ; 
 	}
 
-	
+	public int getTeamId() {
+		return this.teamId ; 
+	}
 	
 	@Override
 	public int hashCode() {
@@ -124,6 +149,22 @@ public class Team {
 		teamsCreated = teamsCreated % 8 ; 
 		return newTeam ; 
 	}
-	
+
+	@Override
+	public String toString() {
+		String string = this.teamName + ", " ;
+		string += "teamId: " + this.teamId + ", " ; 
+		string += "manId: " + this.manId + ", "; 
+		string += "leagueId: " + this.leagueId + ", ";
+		string += "man: " + this.man + ", "; 
+		string += "woman: " + this.woman + ", ";
+		string += "manId: " + this.manId + ", "; 
+		string += "womanId: " + this.womanId ; 
+		return string ; 
+	}
+
+	public void setId(int teamId) {
+		this.teamId = teamId ; 
+	}
 	
 }

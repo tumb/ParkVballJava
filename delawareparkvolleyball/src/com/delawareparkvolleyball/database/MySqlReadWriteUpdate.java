@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import com.mysql.jdbc.Driver ; 
 
 import com.delawareparkvolleyball.schedule.DayOfTheWeek;
 import com.delawareparkvolleyball.schedule.League;
@@ -34,7 +35,7 @@ public class MySqlReadWriteUpdate {
 						password);
 			}
 		} catch (ClassNotFoundException classNotFoundException) {
-			System.out.println("ClassNotFoundException: "
+			System.out.println("Unable to create connection in MySqlReadWriteUpdate. ClassNotFoundException: "
 					+ classNotFoundException.getMessage());
 		} catch (SQLException exception) {
 			System.out.println("SQL Error when fetching connection: "
@@ -154,7 +155,7 @@ public class MySqlReadWriteUpdate {
 			leagueResultSet = leagueStatement.executeQuery(selectSql);
 			while (leagueResultSet.next()) {
 				String day = leagueResultSet.getString("day_of_week");
-				if (DayOfTheWeek.THURSDAY.equals(day)) {
+				if (DayOfTheWeek.THURSDAY.toString().equals(day)) {
 					day_of_the_week = DayOfTheWeek.THURSDAY;
 				}
 				year = leagueResultSet.getInt("year");

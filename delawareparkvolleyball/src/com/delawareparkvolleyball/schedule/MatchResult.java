@@ -71,7 +71,29 @@ public boolean containsBoth(Team teamA2, Team teamB2) {
 	containsBoth = containsBoth && (this.teamA.equals(teamB2) || this.teamB.equals(teamB2)) ;
 	return containsBoth ;
 }
+	
+	@Override
+	public String toString() {
+		String string = "dayOfPlay: " + dayOfPlay + ", " ;
+		string += "league.getId(): " + this.league.getId() + ", " ;
+		if(teamA != null) {
+			string += this.teamA.getTeamName() + ", " ;
+		}
+		else {
+			string += "no team A." ; 
+		}
+		string += " A wins: " + teamAwins + ", " ;
+		if(teamB != null) {
+			string += this.teamB.getTeamName() + " wins: " + teamBwins ;
+		}
+		else {
+			string += " teamB is null. " ; 
+		}
+		return string ; 
+	}
 
- 
+	public boolean containsWins() {
+		return this.teamAwins > 0 || this.teamBwins > 0 ;
+	}
  
 }

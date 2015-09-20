@@ -93,5 +93,9 @@ public class Schedule {
 	public Date getDayOfPlay() {
 		return dayOfPlay;
 	}
+
+	public String getMatchName() {
+		return this.teamA.getTeamName() + "-" + this.teamB.getTeamName() ;
+	}
 	
 }
