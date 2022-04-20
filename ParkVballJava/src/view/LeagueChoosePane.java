@@ -1,0 +1,92 @@
+package view;
+
+import controller.Controller;
+import controller.League;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+
+/**
+ * This will be the top menu bar on a few panes - displays and sets: the day of week, division, year, and date 
+ * @author thom
+ *
+ */
+public class LeagueChoosePane extends GridPaneControlled {
+		League league ; 
+		ListView<String> divisionList ;
+		ListView <String> dateList ;
+
+	public LeagueChoosePane(Controller controller, League defaultLeague) {
+		this.controller = controller;
+		this.league = defaultLeague ; 
+		
+		this.setPadding(new Insets(10, 10, 10, 10));
+		this.setVgap(20);
+		this.setHgap(5);
+		this.setStyle("-fx-background-color: lightblue") ;
+	
+		ListView<String> yearList = new ListView<String>();
+		yearList.setItems(controller.buildYearList());
+		ChangeListener<String> yearChange = new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				controller.setLeagueYear(newValue);
+			}
+		};
+		yearList.getSelectionModel().selectedItemProperty().addListener(yearChange);
+
+		yearList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		yearList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+
+		ListView<String> dayList = new ListView<String>();
+		dayList.setItems(controller.buildDayList());
+		ChangeListener<String> dayChange = new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				controller.setLeagueDay(newValue);
+			}
+		};
+		dayList.getSelectionModel().selectedItemProperty().addListener(dayChange) ;
+		dayList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		dayList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+
+
+		this.divisionList = new ListView<String>();
+		divisionList.setItems(controller.buildDivisionNameList());
+		ChangeListener<String> divisionChange = new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				controller.setLeagueDivisionName(newValue);
+			}
+		};
+		divisionList.getSelectionModel().selectedItemProperty().addListener(divisionChange);
+		divisionList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		divisionList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+
+		this.dateList = new ListView<String>() ; 
+		dateList.setItems(controller.buildDateList(league)) ;
+		ChangeListener<String> dateChange = new ChangeListener<String>() {
+			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				controller.setMatchDate(newValue);
+			}
+		};
+		dateList.getSelectionModel().selectedItemProperty().addListener(dateChange); 
+		dateList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		dateList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+
+		this.add(new Label("Day"), 0, 0) ;
+		this.add(new Label("Date"), 1, 0) ;
+		this.add(new Label("Division"), 2, 0) ;
+		this.add(new Label("Year"), 3, 0) ;
+
+		this.add(dayList, 0, 1) ;
+		this.add(dateList, 1, 1) ;
+		this.add(divisionList, 2, 1) ;
+		this.add(yearList, 3, 1) ;
+	}
+	
+	public void setNewMatchDates(ObservableList<String> newDates) {
+		this.dateList.getItems().clear();
+		this.dateList.setItems(newDates) ;
+	}
+}
