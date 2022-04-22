@@ -500,4 +500,21 @@ public class Controller {
 		return playerList ; 
 	}
 
+	public void submitSubmitNewPlayer(Player player) {
+		if(player.isValid()) {
+			// Maybe check that the player doesn't already exist
+			// add to database
+			boolean success = this.mySqlDatabase.insertPlayer(player) ;
+			if(success) {
+				viewFX.popupWindow("Success", player.getFirstName() + " " + player.getLastName()+ " added.") ;
+				viewFX.addToAllPlayersList(player) ;
+			}
+			// add to list of addPlayersPane
+		}
+		else {
+			viewFX.popupWindow("Invalid Player", "Player submitted is: " + player.toString()) ; 
+		}
+		
+	}
+
 }

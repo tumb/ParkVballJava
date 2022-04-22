@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import controller.Controller;
 import controller.League;
 import controller.Match;
+import controller.Player;
 import controller.TeamStandings;
 import javafx.application.Application ;
 import javafx.collections.ObservableList;
@@ -189,6 +190,10 @@ public class ApplicationFX extends Application {
 		this.addPlayersPane.setPlayers(existingPlayers) ;
 		baseScene.setRoot(this.addPlayersPane) ; 
 		
+	}
+
+	public void addToAllPlayersList(Player player) {
+		this.addPlayersPane.addToAllPlayersList(player) ;
 	}
 	
 	// A better popup would be like this:

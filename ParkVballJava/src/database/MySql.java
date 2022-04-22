@@ -327,14 +327,14 @@ insert into parkvball.schedule (MatchDate, Team1, team1wins, Team2, team2wins, L
 			for(int i = 0 ; i < selectedMatches.size();  i++) {
 				Match match = selectedMatches.get(i) ;
 				if(match.getId() < 1) { // Don't create a match if it already exists.
-				fullSql = startingSql + match.getTeamAName() + "' and leagueid = " + leagueIdSubQuery + " )," ;
-				fullSql += " 0," ; // No team 1 wins for this insert.
-				fullSql += " (select TeamId from parkvball.team where TeamName = '" + match.getTeamBName() + "' and leagueid = " + leagueIdSubQuery + " ),"  ;
-				fullSql += " 0," ; // No team 2 wins for this insert.
-				fullSql += leagueIdSubQuery + ", " ;
-				fullSql += divisionSubQuery + ") " ; 
-				int result = submitStatement.executeUpdate(fullSql) ;
-				success = success && (result == 1) ;
+					fullSql = startingSql + match.getTeamAName() + "' and leagueid = " + leagueIdSubQuery + " )," ;
+					fullSql += " 0," ; // No team 1 wins for this insert.
+					fullSql += " (select TeamId from parkvball.team where TeamName = '" + match.getTeamBName() + "' and leagueid = " + leagueIdSubQuery + " ),"  ;
+					fullSql += " 0," ; // No team 2 wins for this insert.
+					fullSql += leagueIdSubQuery + ", " ;
+					fullSql += divisionSubQuery + ") " ; 
+					int result = submitStatement.executeUpdate(fullSql) ;
+					success = success && (result == 1) ;
 				}
 			}
 		} catch (SQLException exception) {
@@ -343,7 +343,7 @@ insert into parkvball.schedule (MatchDate, Team1, team1wins, Team2, team2wins, L
 			System.out.println("sql: " + fullSql) ; 
 		} 
 		return success ; 
-		
+
 	}
 
 	public String[] fetchMatchDates(League league) {
@@ -631,6 +631,27 @@ where
 			System.out.println("query: " + query) ; 
 		} 
 		return allPlayers ; // If the fetch fails return an empty array.
+	}
+
+	public boolean insertPlayer(Player player) {
+		boolean success = true ;
+		String insertSql = "insert into parkvball.player (Firstname, Lastname, Gender, Email, Phone) " ;
+		insertSql += " values (" ;
+		insertSql += "'" + player.getFirstName() + "', '" + player.getLastName() + "', " ;   
+		insertSql += "'" + player.getGender() + "', '" + player.getEmail() + "', " ;   
+		insertSql += "'" + player.getPhone() + "')" ;   
+		try {
+			Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+				if(player.getId() < 1) { // Don't create a match if it already exists.
+					int result = submitStatement.executeUpdate(insertSql) ;
+					success = success && (result == 1) ;
+				}
+		} catch (SQLException exception) {
+			success = false ; 
+			System.out.println(exception.getMessage()) ;
+			System.out.println("sql: " + insertSql) ; 
+		} 
+		return success ; 
 	}
 
 }

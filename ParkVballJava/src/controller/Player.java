@@ -17,6 +17,13 @@ public class Player {
 		this.email = email ; 
 		this.phone = phone ; 
 		this.id = id ; 
+		
+		if(this.email == null || this.email.isEmpty()) {
+			this.email = "unknown" ; 
+		}
+		if(this.phone == null || this.phone.isEmpty()) {
+			this.phone = "unknown" ; 
+		}
 	}
 	
 	public int getId() {
@@ -68,7 +75,7 @@ public class Player {
 	} 
 	
 	public String toString() {
-		return firstName + " " + lastName + " " + gender + " phone: " + phone + " email: " + email + " id: " + id ;  
+		return firstName + " " + lastName + " " + gender + " \t phone: " + phone + ", email: " + email + " id: " + id ;  
 	}
 	
 	@Override
@@ -85,5 +92,12 @@ public class Player {
 			return false;
 		Player other = (Player) obj;
 		return Objects.equals(firstName, other.firstName) && Objects.equals(lastName, other.lastName);
+	}
+
+	public boolean isValid() {
+		boolean isValid = !(firstName == null || firstName.isEmpty()) ; 
+		isValid = isValid && !(lastName == null || lastName.isEmpty()) ;
+		isValid = isValid && !(gender == null || gender.isEmpty()) ;
+		return isValid ;
 	}
 }
