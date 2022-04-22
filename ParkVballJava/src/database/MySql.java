@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import controller.League;
 import controller.Match;
+import controller.Player;
 import controller.TeamStandings;
 
 public class MySql {
@@ -607,6 +608,29 @@ where
 			System.out.println("query: " + query) ; 
 		} 
 		return new String[0] ; // If the fetch fails return an empty array.
+	}
+
+	public ArrayList<Player> fetchAllPlayers() {
+		ArrayList<Player> allPlayers = new ArrayList<Player>() ; 
+		String query = "select * from parkvball.player order by lastname asc ; " ;
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement() ;
+			ResultSet resultSet = statement.executeQuery(query) ;
+			while( resultSet.next() ) {
+				int id = resultSet.getInt("playerid") ;
+				String firstName = resultSet.getString("FirstName") ; 
+				String lastName  = resultSet.getString("LastName") ; 
+				String gender = resultSet.getString("Gender") ; 
+				String email = resultSet.getString("Email") ; 
+				String phone = resultSet.getString("Phone") ;
+				Player player = new Player(firstName, lastName, gender, email, phone, id) ;
+				allPlayers.add(player) ; 
+			}
+		} catch (SQLException testException) {
+			System.out.println(testException.getMessage()) ;
+			System.out.println("query: " + query) ; 
+		} 
+		return allPlayers ; // If the fetch fails return an empty array.
 	}
 
 }

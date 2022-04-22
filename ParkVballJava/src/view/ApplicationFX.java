@@ -32,6 +32,7 @@ public class ApplicationFX extends Application {
 	private StandingsPane standingsPane ; 
 	private DisplaySchedulePane displaySchedulePane ; 
 	private TeamRecordDisplayPane teamRecordPane ; 
+	private AddPlayersPane addPlayersPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -175,11 +176,19 @@ public class ApplicationFX extends Application {
 		}
 		this.teamRecordPane.setTeamsToSelect(teams) ;
 		baseScene.setRoot(this.teamRecordPane) ; 
-		
 	}
 
 	public void setTeamRecord(Match[] teamMatches, String teamName) {
 		this.teamRecordPane.setTeamMatches(teamMatches, teamName) ; 
+	}
+
+	public void setAddPlayersPane(ObservableList<String> existingPlayers) {
+		if(this.addPlayersPane == null) {
+			this.addPlayersPane = new AddPlayersPane(this.controller) ;
+		}
+		this.addPlayersPane.setPlayers(existingPlayers) ;
+		baseScene.setRoot(this.addPlayersPane) ; 
+		
 	}
 	
 	// A better popup would be like this:

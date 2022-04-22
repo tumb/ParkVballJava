@@ -7,6 +7,7 @@ import java.util.Map;
 import database.MySql;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 import view.ApplicationFX;
 
 public class Controller {
@@ -22,6 +23,7 @@ public class Controller {
 	private boolean isStandingsScreen ; 
 	private boolean isDisplaySchedule ;
 	private boolean isTeamRecord ;
+	private boolean isAddPlayersScreen ;
 	
 	public static void main(String[] arguments) {
 		Controller controller = new Controller() ;
@@ -249,7 +251,8 @@ public class Controller {
 		this.isSchedulingScreen = false ; 
 		this.isStandingsScreen  = false ;
 		this.isDisplaySchedule  = false ; 
-		this.isTeamRecord       = false ; 
+		this.isTeamRecord       = false ;
+		this.isAddPlayersScreen = false ; 
 		if(string.equals("Results")) {
 			this.isResultsScreen = true ; 
 		}
@@ -267,6 +270,9 @@ public class Controller {
 		}
 		else if(string.equals("Team Record" )) {
 			this.isTeamRecord  = true ; 
+		}
+		else if(string.equals("Add Players" )) {
+			this.isAddPlayersScreen   = true ; 
 		}
 	}
 
@@ -477,6 +483,21 @@ public class Controller {
 			teams = this.mySqlDatabase.fetchAllTeamNames(league) ; 
 		}
 		return teams ; 
+	}
+
+	public void displayAddPlayersPane() {
+		this.setFlagForScreen("Add Players") ;
+   		ObservableList<String> existingPlayers = buildListOfAllPlayers() ;
+   		this.viewFX.setAddPlayersPane(existingPlayers) ; 
+	}
+
+	private ObservableList<String> buildListOfAllPlayers() {
+		ArrayList<Player> allPlayers = this.mySqlDatabase.fetchAllPlayers() ;
+		ObservableList<String> playerList = FXCollections.observableArrayList() ;
+		for(int i = 0 ; i < allPlayers.size(); i++) {
+			playerList.add(allPlayers.get(i).toString()) ; 
+		}
+		return playerList ; 
 	}
 
 }

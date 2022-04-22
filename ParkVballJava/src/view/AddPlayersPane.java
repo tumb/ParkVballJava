@@ -1,21 +1,35 @@
 package view;
 
 import controller.Controller;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 
 public class AddPlayersPane extends BorderPane {
 	
-	Controller controller ; 
+	private Controller controller ; 
+	private ListView<String> playerList ; 
 	
 	public AddPlayersPane(Controller controller) {
 		this.controller = controller ; 
 		
 		addBottomPane() ;
+		addPlayerListPane() ; 
+		// addPlayerEntryPane() ; 
 		
+	}
+	public void addPlayerListPane() {
+		GridPane playerListPane = new GridPane() ; 
+		this.playerList = new ListView<String>() ;
+		playerListPane.add(new Label("Existing Players (to avoid duplicates)"), 0, 0);
+		playerListPane.add(playerList, 0, 1);
+		this.setCenter(playerListPane);
 	}
 	
 	public void addBottomPane() {
@@ -37,8 +51,10 @@ public class AddPlayersPane extends BorderPane {
 
 		bottomPane.add(cancelButton, 1, 0) ; 
 		this.setBottom(bottomPane) ; 
-
-
+	}
+	public void setPlayers(ObservableList<String> existingPlayers) {
+		this.playerList.getItems().clear(); 
+		this.playerList.setItems(existingPlayers);
 	}
 	
 
