@@ -24,6 +24,7 @@ public class Controller {
 	private boolean isDisplaySchedule ;
 	private boolean isTeamRecord ;
 	private boolean isAddPlayersScreen ;
+	private boolean isCreateTeamsScreen ; 
 	
 	public static void main(String[] arguments) {
 		Controller controller = new Controller() ;
@@ -246,13 +247,15 @@ public class Controller {
 	}
 
 	private void setFlagForScreen(String string) {
-		this.isAdminScreen      = false ; 
-		this.isResultsScreen    = false ; 
-		this.isSchedulingScreen = false ; 
-		this.isStandingsScreen  = false ;
-		this.isDisplaySchedule  = false ; 
-		this.isTeamRecord       = false ;
-		this.isAddPlayersScreen = false ; 
+		this.isAdminScreen       = false ; 
+		this.isResultsScreen     = false ; 
+		this.isSchedulingScreen  = false ; 
+		this.isStandingsScreen   = false ;
+		this.isDisplaySchedule   = false ; 
+		this.isTeamRecord        = false ;
+		this.isAddPlayersScreen  = false ; 
+		this.isCreateTeamsScreen = false ;
+		
 		if(string.equals("Results")) {
 			this.isResultsScreen = true ; 
 		}
@@ -273,6 +276,9 @@ public class Controller {
 		}
 		else if(string.equals("Add Players" )) {
 			this.isAddPlayersScreen   = true ; 
+		}
+		else if(string.equals("Create Teams" )) {
+			this.isCreateTeamsScreen   = true ; 
 		}
 	}
 
@@ -515,6 +521,14 @@ public class Controller {
 			viewFX.popupWindow("Invalid Player", "Player submitted is: " + player.toString()) ; 
 		}
 		
+	}
+
+	public void displayCreateTeamsPane() {
+		this.setFlagForScreen("Add Players") ;
+		// will change this to supplying collections of players (men & women) and teams for the league.
+//   		ObservableList<String> existingPlayers = buildListOfAllPlayers() ;
+   		this.viewFX.setCreateTeamsPane() ; 
+		// TODO Auto-generated method stub
 	}
 
 }

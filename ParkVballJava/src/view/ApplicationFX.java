@@ -34,6 +34,7 @@ public class ApplicationFX extends Application {
 	private DisplaySchedulePane displaySchedulePane ; 
 	private TeamRecordDisplayPane teamRecordPane ; 
 	private AddPlayersPane addPlayersPane ; 
+	private TeamCreationPane createTeamsPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -194,6 +195,16 @@ public class ApplicationFX extends Application {
 
 	public void addToAllPlayersList(Player player) {
 		this.addPlayersPane.addToAllPlayersList(player) ;
+	}
+
+	public void setCreateTeamsPane() {
+		if(this.createTeamsPane == null) {
+			this.createTeamsPane = new TeamCreationPane(this.controller) ;
+		}
+//		this.addPlayersPane.setPlayers(existingPlayers) ;
+		baseScene.setRoot(this.createTeamsPane) ; 
+		
+		
 	}
 	
 	// A better popup would be like this:

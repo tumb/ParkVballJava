@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Objects;
+
 public class League {
 	private String dayOfWeek ; // Monday, Thursday, etc
 	private int year ; // 2022 etc
@@ -65,4 +67,22 @@ public class League {
 		isEmpty = isEmpty || (this.divisionName == null || this.divisionName.isEmpty()) ;
 		return isEmpty ;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dayOfWeek, year);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		League other = (League) obj;
+		return Objects.equals(dayOfWeek, other.dayOfWeek) && year == other.year;
+	}
+	
 }
