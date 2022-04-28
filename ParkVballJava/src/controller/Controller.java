@@ -150,7 +150,7 @@ public class Controller {
 			// Remove any scheduled matches in memory. They're in the database or to be thrown out.
 			this.selectedMatches.clear() ; 
 			// Get list of all team names. 
-			String[] teamNamesForScheduling = this.mySqlDatabase.fetchTeamNames(selectedLeague) ;
+			String[] teamNamesForScheduling = this.mySqlDatabase.fetchTeamNamesByDivision(selectedLeague) ;
 			// Put it in teamA and teamB list boxes for selection. 
 			this.viewFX.updatesTeamsForScheduling(teamNamesForScheduling) ;
 			if(this.matchDate != null && ! this.matchDate.isEmpty()) {
@@ -322,7 +322,7 @@ public class Controller {
 	}
 
 	public String[] fetchTeamList(League league) {
-		return this.mySqlDatabase.fetchTeamNames(league) ;
+		return this.mySqlDatabase.fetchTeamNamesByDivision(league) ;
 	}
 
 	public ArrayList<Match> fetchMatchesForTeam(League league, String date, String teamName) {
@@ -524,11 +524,29 @@ public class Controller {
 	}
 
 	public void displayCreateTeamsPane() {
-		this.setFlagForScreen("Add Players") ;
-		// will change this to supplying collections of players (men & women) and teams for the league.
-//   		ObservableList<String> existingPlayers = buildListOfAllPlayers() ;
-   		this.viewFX.setCreateTeamsPane() ; 
-		// TODO Auto-generated method stub
+		this.setFlagForScreen("Create Teams") ;
+   		this.viewFX.setCreateTeamsPane() ;
+   		boolean wantMen = true ; 
+   		ArrayList<Player> men = this.mySqlDatabase.fetchAllPlayers(wantMen) ;
+   		wantMen = false ; 
+   		ArrayList<Player> women = this.mySqlDatabase.fetchAllPlayers(wantMen) ;
+   		ArrayList<Team> teams = this.mySqlDatabase.fetchTeams(this.selectedLeague) ;
+   		this.viewFX.setCreateTeamsPaneData(men, women, teams) ; 
+	}
+
+	public void displayPopup(String title, String message) {
+		this.viewFX.popupWindow(title, message) ;
+	}
+
+	public void submitNewTeam(Team team) {
+		boolean success = this.mySqlDatabase.insertNewTeam(team) ;
+		String title = "Save Failed" ;
+		String message = "Unable to save " + team.getTeamName() ;
+		if(success) {
+			title = "Save Comlete!" ; 
+			message = "Saved team " + team.getTeamName() ; 
+		}
+		this.viewFX.popupWindow(title, message) ;
 	}
 
 }

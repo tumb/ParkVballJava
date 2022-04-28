@@ -8,10 +8,35 @@ public class Team {
 	private Player woman ; 
 	private String teamName ; 
 	private int teamId ;
+	String divisionName ; 
+	
+	public Team(League league, Player man, Player woman, String teamName, int teamId, String divisionName) {
+		this.league = league ; 
+		this.man = man ; 
+		this.woman = woman ; 
+		this.teamName = teamName ; 
+		this.teamId = teamId ; 
+		this.divisionName = divisionName ; 
+	}
+	
+	public Team(League league, Player man, Player woman, String teamName) {
+		this.league = league ; 
+		this.man = man ; 
+		this.woman = woman ; 
+		this.teamName = teamName ; 
+	}
 	
 	public League getLeague() {
 		return league;
 	}
+	public String getDivisionName() {
+		return divisionName;
+	}
+
+	public void setDivisionName(String divisionName) {
+		this.divisionName = divisionName;
+	}
+
 	public void setLeague(League league) {
 		this.league = league;
 	}
@@ -57,7 +82,11 @@ public class Team {
 	} 
 	
 	public String toString() {
-		String string = teamName + " " + league.getDayOfWeek() + " " + league.getYear() + " " + league.getDivisionName() ; 
+		String divisionName = league.getDivisionName() ; 
+		if(divisionName == null || divisionName.isEmpty()) {
+			divisionName = "brown" ; 
+		}
+		String string = teamName + " " + league.getDayOfWeek() + " " + league.getYear() + " " + divisionName ; 
 		string += " " + woman.getFirstName() + " " + woman.getLastName() + ", " + man.getFirstName() + " " + man.getLastName() + " " + teamId ;
 		return string ; 
 	}

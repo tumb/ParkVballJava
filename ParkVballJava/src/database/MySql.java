@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import controller.League;
 import controller.Match;
 import controller.Player;
+import controller.Team;
 import controller.TeamStandings;
 
 public class MySql {
@@ -149,7 +150,7 @@ public class MySql {
 		}
 	}
 
-	public String[] fetchTeamNames(League selectedLeague) {
+	public String[] fetchTeamNamesByDivision(League selectedLeague) {
 		String query = "select t.teamname from parkvball.team t "
 				+ " join parkvball.league l on t.LeagueId = l.LeagueId "
 				+ " join parkvball.division d on t.divisionId = d.divisionId "
@@ -652,6 +653,131 @@ where
 			System.out.println("sql: " + insertSql) ; 
 		} 
 		return success ; 
+	}
+
+	public ArrayList<Player> fetchAllPlayers(boolean wantMen) {
+		ArrayList<Player> allPlayers = new ArrayList<Player>() ;
+		String genderFlag = "F" ; 
+		if(wantMen) {
+			genderFlag = "M" ;
+		}
+		String query = "select * from parkvball.player where gender = '" + genderFlag + "' order by lastname asc ; " ;
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement() ;
+			ResultSet resultSet = statement.executeQuery(query) ;
+			while( resultSet.next() ) {
+				int id = resultSet.getInt("playerid") ;
+				String firstName = resultSet.getString("FirstName") ; 
+				String lastName  = resultSet.getString("LastName") ; 
+				String gender = resultSet.getString("Gender") ; 
+				String email = resultSet.getString("Email") ; 
+				String phone = resultSet.getString("Phone") ;
+				Player player = new Player(firstName, lastName, gender, email, phone, id) ;
+				allPlayers.add(player) ; 
+			}
+		} catch (SQLException testException) {
+			System.out.println(testException.getMessage()) ;
+			System.out.println("query: " + query) ; 
+		} 
+		return allPlayers ; // If the fetch fails return an empty array.
+	}
+
+	/**
+	 * Called by create teams feature. 
+	 * Will return as much team information as the database has for that league.
+	 * @param league
+	 * @return
+	 */
+	public ArrayList<Team> fetchTeams(League league) {
+		boolean hasDivision = league.hasDivision() ;
+		String query = "select t.teamname, m.firstName maleFirstName, m.lastName maleLastName, t.maleId, "
+				+ " f.firstName femaleFirstName, f.lastName femaleLastName, t.femaleId, t.teamId " ;
+		if(hasDivision) {
+			query += ", d.divisionName " ;
+		}
+		query +=  " from parkvball.team t join parkvball.league l on t.LeagueId = l.LeagueId " ;
+		query += " join parkvball.player m on t.maleId = m.playerid  " ;
+		query += " join parkvball.player f on t.femaleId = f.playerid  " ;
+		if(hasDivision) {
+			query +=  " join parkvball.division d on t.divisionId = d.divisionId " ;
+		}
+		query +=  " where l.Year = " + league.getYear() + " and l.Day = '" + league.getDayOfWeek() + "' " ;
+		query += " order by teamname asc  " ;
+		
+		ArrayList<Team> teamNames = new ArrayList<Team>() ;
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement() ;
+			ResultSet resultSet = statement.executeQuery(query) ;
+			while( resultSet.next() ) {
+				String teamName =  resultSet.getString("teamname") ;
+				String manFirst = resultSet.getString("maleFirstName") ;
+				String manLast = resultSet.getString("maleLastName") ;
+				int maleId = resultSet.getInt("maleId") ;
+				Player man = new Player(manFirst, manLast, "M", "", "", maleId) ; 
+				String womanFirst = resultSet.getString("femaleFirstName") ;
+				String womanLast = resultSet.getString("femaleLastName") ;
+				int femaleId = resultSet.getInt("femaleId") ;
+				Player woman = new Player(womanFirst, womanLast, "F", "", "", femaleId) ; 
+				int teamId = resultSet.getInt("teamId");
+				String divisionName = "" ;
+				if(hasDivision) {
+					divisionName = resultSet.getString("divisionName") ; 
+				}
+				Team team = new Team(league, man, woman, teamName, teamId, divisionName) ;
+				teamNames.add(team) ;
+			}
+		} catch (SQLException testException) {
+			System.out.println(testException.getMessage()) ;
+			System.out.println("query: " + query) ; 
+		} 
+		return teamNames ; 
+	}
+
+	public boolean insertNewTeam(Team team) {
+		boolean success = true ;
+		String insertSql = "insert into parkvball.team (teamname, maleid, femaleid, leagueid, divisionid) " ;
+		insertSql += " values (" ;
+		insertSql += "'" + team.getTeamName()+ "', " ;
+		int maleid = team.getMan().getId() ;
+		if(maleid > 0 ) {
+			insertSql += maleid + ", " ;
+		}
+		else {
+			insertSql += "(select playerid from parkvball.player where gender = 'M' and firstname = '" + team.getMan().getFirstName() ;
+			insertSql += "' and lastname = '" + team.getMan().getLastName() + "', " ;
+		}
+		Player woman = team.getWoman(); 
+		if(woman.getId() > 0) {
+			insertSql += woman.getId() + ", " ;
+		}
+		else {
+			insertSql += "(select playerid from parkvball.player where gender = 'F' and firstname = '" + woman.getFirstName() ;
+			insertSql += "' and lastname = '" + woman.getLastName() + "', " ;
+		}
+		insertSql += buildLeagueSubquery(team.getLeague()) + ", " ;
+		String divisionName = team.getDivisionName() ; 
+		if(divisionName == null || divisionName.isEmpty() || divisionName.equals("brown") ) {
+			insertSql += 0 + " " ;
+		}
+		else {
+			insertSql += " (select divisionid from parkvball.division d where d.leagueid = " + buildLeagueSubquery(team.getLeague()) ;
+			insertSql += " and d.divisionname = '" + divisionName + "' " ;
+		}
+		insertSql += ") " ;
+		
+		try {
+			Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+				if(team.getTeamId() < 1) { // Don't create a match if it already exists.
+					int result = submitStatement.executeUpdate(insertSql) ;
+					success = success && (result == 1) ;
+				}
+		} catch (SQLException exception) {
+			success = false ; 
+			System.out.println(exception.getMessage()) ;
+			System.out.println("sql: " + insertSql) ; 
+		} 
+		return success ; 
+		
 	}
 
 }

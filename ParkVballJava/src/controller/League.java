@@ -84,5 +84,9 @@ public class League {
 		League other = (League) obj;
 		return Objects.equals(dayOfWeek, other.dayOfWeek) && year == other.year;
 	}
+
+	public boolean hasDivision() {
+		return ! (this.divisionName == null || this.divisionName.isEmpty());
+	}
 	
 }

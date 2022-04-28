@@ -6,6 +6,7 @@ import controller.Controller;
 import controller.League;
 import controller.Match;
 import controller.Player;
+import controller.Team;
 import controller.TeamStandings;
 import javafx.application.Application ;
 import javafx.collections.ObservableList;
@@ -205,6 +206,10 @@ public class ApplicationFX extends Application {
 		baseScene.setRoot(this.createTeamsPane) ; 
 		
 		
+	}
+
+	public void setCreateTeamsPaneData(ArrayList<Player> men, ArrayList<Player> women, ArrayList<Team> teams) {
+		this.createTeamsPane.setData(men, women, teams); 
 	}
 	
 	// A better popup would be like this:
