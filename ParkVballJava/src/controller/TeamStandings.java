@@ -12,7 +12,6 @@ public class TeamStandings implements Comparable {
 	String currentDivision ;
 	String teamName ;
 	
-	
 	public String getTeamName() {
 		return teamName;
 	}

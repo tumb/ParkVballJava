@@ -11,7 +11,9 @@ import controller.League;
 import controller.Match;
 import controller.Player;
 import controller.Team;
+import controller.TeamRecentStandings;
 import controller.TeamStandings;
+import javafx.collections.ObservableList;
 
 public class MySql {
 
@@ -103,7 +105,7 @@ public class MySql {
 			ResultSet resultSet = statement.executeQuery(query) ;
 			ArrayList<String> allDivisions = new ArrayList<String>() ;
 			while( resultSet.next() ) {
-				allDivisions.add(resultSet.getString("divisionName")) ; 
+				allDivisions.add(resultSet.getString("divisionName").toLowerCase()) ; 
 			}
 			return allDivisions.toArray(new String[0] ); 
 		} catch (SQLException testException) {
@@ -350,7 +352,7 @@ insert into parkvball.schedule (MatchDate, Team1, team1wins, Team2, team2wins, L
 	public String[] fetchMatchDates(League league) {
 		String query = "select distinct s.matchDate from parkvball.schedule s join parkvball.league l on s.LeagueId = l.LeagueId " ;
 		int year = 2021 ; 
-		if(league != null && ! league.isMissingDayYearOrDivision()) {
+		if(league != null && ! league.isMissingDayOrYear()) {
 			year = league.getYear() ; 
 			query += " where l.Year = " + year 
 			+ " and l.Day = '" + league.getDayOfWeek() + "' " ;
@@ -689,18 +691,12 @@ where
 	 * @return
 	 */
 	public ArrayList<Team> fetchTeams(League league) {
-		boolean hasDivision = league.hasDivision() ;
 		String query = "select t.teamname, m.firstName maleFirstName, m.lastName maleLastName, t.maleId, "
-				+ " f.firstName femaleFirstName, f.lastName femaleLastName, t.femaleId, t.teamId " ;
-		if(hasDivision) {
-			query += ", d.divisionName " ;
-		}
+				+ " f.firstName femaleFirstName, f.lastName femaleLastName, t.femaleId, t.teamId, d.divisionName " ;
 		query +=  " from parkvball.team t join parkvball.league l on t.LeagueId = l.LeagueId " ;
 		query += " join parkvball.player m on t.maleId = m.playerid  " ;
 		query += " join parkvball.player f on t.femaleId = f.playerid  " ;
-		if(hasDivision) {
-			query +=  " join parkvball.division d on t.divisionId = d.divisionId " ;
-		}
+		query += " join parkvball.division d on t.divisionId = d.divisionId " ;
 		query +=  " where l.Year = " + league.getYear() + " and l.Day = '" + league.getDayOfWeek() + "' " ;
 		query += " order by teamname asc  " ;
 		
@@ -719,10 +715,7 @@ where
 				int femaleId = resultSet.getInt("femaleId") ;
 				Player woman = new Player(womanFirst, womanLast, "F", "", "", femaleId) ; 
 				int teamId = resultSet.getInt("teamId");
-				String divisionName = "" ;
-				if(hasDivision) {
-					divisionName = resultSet.getString("divisionName") ; 
-				}
+				String divisionName = resultSet.getString("divisionName") ; 
 				Team team = new Team(league, man, woman, teamName, teamId, divisionName) ;
 				teamNames.add(team) ;
 			}
@@ -778,6 +771,20 @@ where
 		} 
 		return success ; 
 		
+	}
+
+	public ArrayList<TeamRecentStandings> fetchRecentStandings(League selectedLeague, ObservableList<String> dates) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ArrayList<Match> fetchMatches(League league, ObservableList<String> dates) {
+		ArrayList<Match> allMatches = new ArrayList<Match>() ; 
+		for(int i = 0 ; i < dates.size() ; i++) {
+			String date = dates.get(i) ; 
+			allMatches.addAll(fetchMatches(league, date)) ; 
+		}
+		return allMatches ;
 	}
 
 }

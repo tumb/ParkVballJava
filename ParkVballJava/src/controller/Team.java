@@ -8,7 +8,7 @@ public class Team {
 	private Player woman ; 
 	private String teamName ; 
 	private int teamId ;
-	String divisionName ; 
+	private String divisionName ; 
 	
 	public Team(League league, Player man, Player woman, String teamName, int teamId, String divisionName) {
 		this.league = league ; 

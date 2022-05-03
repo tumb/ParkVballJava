@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 
 /**
  * This will be the top menu bar on a few panes - displays and sets: the day of week, division, year, and date 
@@ -18,7 +19,9 @@ public class LeagueChoosePane extends GridPaneControlled {
 		League league ; 
 		ListView<String> divisionList ;
 		ListView <String> dateList ;
-
+		ListView<String> yearList ;
+		ListView<String> dayOfWeekList ;
+		
 	public LeagueChoosePane(Controller controller, League defaultLeague) {
 		this.controller = controller;
 		this.league = defaultLeague ; 
@@ -28,7 +31,7 @@ public class LeagueChoosePane extends GridPaneControlled {
 		this.setHgap(5);
 		this.setStyle("-fx-background-color: lightblue") ;
 	
-		ListView<String> yearList = new ListView<String>();
+		yearList = new ListView<String>();
 		yearList.setItems(controller.buildYearList());
 		ChangeListener<String> yearChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
@@ -40,16 +43,16 @@ public class LeagueChoosePane extends GridPaneControlled {
 		yearList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
 		yearList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
 
-		ListView<String> dayList = new ListView<String>();
-		dayList.setItems(controller.buildDayList());
+		dayOfWeekList = new ListView<String>();
+		dayOfWeekList.setItems(controller.buildDayList());
 		ChangeListener<String> dayChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
 				controller.setLeagueDay(newValue);
 			}
 		};
-		dayList.getSelectionModel().selectedItemProperty().addListener(dayChange) ;
-		dayList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
-		dayList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		dayOfWeekList.getSelectionModel().selectedItemProperty().addListener(dayChange) ;
+		dayOfWeekList.setMaxHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
+		dayOfWeekList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
 
 
 		this.divisionList = new ListView<String>();
@@ -67,7 +70,13 @@ public class LeagueChoosePane extends GridPaneControlled {
 		dateList.setItems(controller.buildDateList(league)) ;
 		ChangeListener<String> dateChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
-				controller.setMatchDate(newValue);
+				ObservableList<String> selections = dateList.getSelectionModel().getSelectedItems() ;
+				if(selections.size() == 1) {
+					controller.setMatchDate(newValue);
+				}
+				else if(selections.size() > 1) {
+					controller.setMultipleMatchDates(selections) ;
+				}
 			}
 		};
 		dateList.getSelectionModel().selectedItemProperty().addListener(dateChange); 
@@ -79,7 +88,7 @@ public class LeagueChoosePane extends GridPaneControlled {
 		this.add(new Label("Division"), 2, 0) ;
 		this.add(new Label("Year"), 3, 0) ;
 
-		this.add(dayList, 0, 1) ;
+		this.add(dayOfWeekList, 0, 1) ;
 		this.add(dateList, 1, 1) ;
 		this.add(divisionList, 2, 1) ;
 		this.add(yearList, 3, 1) ;
@@ -88,5 +97,23 @@ public class LeagueChoosePane extends GridPaneControlled {
 	public void setNewMatchDates(ObservableList<String> newDates) {
 		this.dateList.getItems().clear();
 		this.dateList.setItems(newDates) ;
+	}
+
+	public void removeDivisionSection() {
+		this.getChildren().remove(divisionList) ;
+	}
+
+	public void makeDatesMultiselect() {
+		this.dateList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		// put in a multiselection listener in place of the single section listener
+		
+	}
+
+	public void setLeague(League league) {
+		if(league.isValid()) {
+			this.league = league ; 
+			this.yearList.getSelectionModel().select("" + this.league.getYear());
+			this.dayOfWeekList.getSelectionModel().select(this.league.getDayOfWeek());
+		}
 	}
 }

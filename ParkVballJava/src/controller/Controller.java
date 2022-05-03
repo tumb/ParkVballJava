@@ -25,6 +25,7 @@ public class Controller {
 	private boolean isTeamRecord ;
 	private boolean isAddPlayersScreen ;
 	private boolean isCreateTeamsScreen ; 
+	private boolean isUpdateDivisionsScreen ;
 	
 	public static void main(String[] arguments) {
 		Controller controller = new Controller() ;
@@ -86,13 +87,9 @@ public class Controller {
 
 	public void setLeagueDay(String day) { // Set the slected day of week for the league
 		this.selectedLeague.setDayOfWeek(day) ; 
-		ObservableList<String> dateList = buildDateList(this.selectedLeague) ;
-		this.viewFX.setNewMatchDates(dateList) ;
-		if(isResultsScreen) {
-			ObservableList<String> matchDates = buildDateList(this.selectedLeague) ;
-			this.viewFX.setNewMatchDates(matchDates) ;
-		}
-		else if(isSchedulingScreen) {
+		ObservableList<String> matchDates = buildDateList(this.selectedLeague) ;
+		this.viewFX.setNewMatchDates(matchDates) ;
+		if(isSchedulingScreen) {
 			this.updateSchedulingDisplay() ;
 		}
 		else if(isStandingsScreen) {
@@ -255,6 +252,7 @@ public class Controller {
 		this.isTeamRecord        = false ;
 		this.isAddPlayersScreen  = false ; 
 		this.isCreateTeamsScreen = false ;
+		this.isUpdateDivisionsScreen  = false ; 
 		
 		if(string.equals("Results")) {
 			this.isResultsScreen = true ; 
@@ -280,6 +278,10 @@ public class Controller {
 		else if(string.equals("Create Teams" )) {
 			this.isCreateTeamsScreen   = true ; 
 		}
+		else if(string.equals("Update Divisions" )) {
+			this.isUpdateDivisionsScreen   = true ; 
+		}
+		
 	}
 
 	public ObservableList<String> buildDateList(League league) {
@@ -547,6 +549,45 @@ public class Controller {
 			message = "Saved team " + team.getTeamName() ; 
 		}
 		this.viewFX.popupWindow(title, message) ;
+	}
+
+	public void displayUpdateDivisionsPane() {
+		this.setFlagForScreen("Update Divisions") ;
+   		this.viewFX.setUpdateDivisionsPane() ;
+   		// Prepare and pass along any data needed to start. Probably the 2 week standings for the current league.
+	}
+
+	public void setMultipleMatchDates(ObservableList<String> dates) {
+		if(isUpdateDivisionsScreen) {
+			ArrayList<Team> teams = this.mySqlDatabase.fetchTeams(this.selectedLeague) ;
+			ArrayList<Match> matches = this.mySqlDatabase.fetchMatches(selectedLeague, dates) ; 
+			ArrayList<TeamRecentStandings> teamRecentStandings = computeTeamRecentStandings(teams, matches) ;
+			teamRecentStandings.sort(null);
+			this.viewFX.updateRecentStandings(teamRecentStandings) ;
+		}
+	}
+
+	private ArrayList<TeamRecentStandings> computeTeamRecentStandings(ArrayList<Team> teams, ArrayList<Match> matches) {
+		ArrayList<TeamRecentStandings> allRecentStandings = new ArrayList<TeamRecentStandings>() ;
+		for(int i = 0 ; i < teams.size() ; i++ ) {
+			Team team = teams.get(i) ; 
+			TeamRecentStandings teamRecentStandings = new TeamRecentStandings(team) ; 
+			for(int j = 0 ; j < matches.size() ; j++) {
+				Match match = matches.get(j) ; 
+				if(team.getTeamName().equals(match.getTeamAName())) {
+					int wins = match.getTeamAWins() ; 
+					int losses = match.getTeamBWins() ; 
+					teamRecentStandings.addMatchResult(wins, losses) ; 
+				}
+				if(team.getTeamName().equals(match.getTeamBName())) {
+					int wins = match.getTeamBWins() ; 
+					int losses = match.getTeamAWins() ; 
+					teamRecentStandings.addMatchResult(wins, losses) ; 
+				}
+			} // end of for match(j) loop
+			allRecentStandings.add(teamRecentStandings) ;
+		} // end of for team(i) loop
+		return allRecentStandings;
 	}
 
 }

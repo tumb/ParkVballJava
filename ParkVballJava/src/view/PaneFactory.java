@@ -100,6 +100,15 @@ public class PaneFactory {
 		Button teamRecordButton = new Button("Team Record") ;
 		Button addPlayersButton = new Button("Add Players") ;
 		Button createTeamsButton = new Button("Create Teams") ;
+		Button updateDivisionsButton = new Button("Update Divisions") ;
+		
+		EventHandler<MouseEvent> updateDivisionsEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				controller.displayUpdateDivisionsPane() ; 
+			}
+		} ;
+		updateDivisionsButton.addEventFilter(MouseEvent.MOUSE_CLICKED, updateDivisionsEvent) ;
 		
 		EventHandler<MouseEvent> createTeamsEvent = new EventHandler<MouseEvent>() {
 			@Override
@@ -189,6 +198,8 @@ public class PaneFactory {
 		homePane.add(addPlayersButton, 0, y) ;
 		y++ ;
 		homePane.add(createTeamsButton, 0, y) ;
+		y++ ;
+		homePane.add(updateDivisionsButton, 0, y) ;
 		y++ ;
 		
 	}

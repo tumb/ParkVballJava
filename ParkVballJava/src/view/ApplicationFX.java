@@ -7,6 +7,7 @@ import controller.League;
 import controller.Match;
 import controller.Player;
 import controller.Team;
+import controller.TeamRecentStandings;
 import controller.TeamStandings;
 import javafx.application.Application ;
 import javafx.collections.ObservableList;
@@ -36,6 +37,7 @@ public class ApplicationFX extends Application {
 	private TeamRecordDisplayPane teamRecordPane ; 
 	private AddPlayersPane addPlayersPane ; 
 	private TeamCreationPane createTeamsPane ; 
+	private UpdateDivisionsPane updateDivisionsPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -146,6 +148,9 @@ public class ApplicationFX extends Application {
 		if(this.resultsPane != null) {
 			this.resultsPane.setNewMatchDates(matchDates) ;
 		}
+		if(this.updateDivisionsPane != null) {
+			this.updateDivisionsPane.setNewMatchDates(matchDates) ;
+		}
 	}
 
 	public void updateScheduledMatchesView(ArrayList<Match> selectedMatches) {
@@ -210,6 +215,22 @@ public class ApplicationFX extends Application {
 
 	public void setCreateTeamsPaneData(ArrayList<Player> men, ArrayList<Player> women, ArrayList<Team> teams) {
 		this.createTeamsPane.setData(men, women, teams); 
+	}
+
+	public void setUpdateDivisionsPane() {
+		if(this.updateDivisionsPane == null) {
+			this.updateDivisionsPane = new UpdateDivisionsPane(this.controller) ;
+		}
+		baseScene.setRoot(this.updateDivisionsPane) ; 
+	}
+
+	public void removeDivisionFromLeagueChoosePane() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateRecentStandings(ArrayList<TeamRecentStandings> teamRecentStandings) {
+		this.updateDivisionsPane.setTeamRecentStandings(teamRecentStandings) ; 
 	}
 	
 	// A better popup would be like this:

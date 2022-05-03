@@ -88,5 +88,11 @@ public class League {
 	public boolean hasDivision() {
 		return ! (this.divisionName == null || this.divisionName.isEmpty());
 	}
+
+	public boolean isMissingDayOrYear() {
+		boolean isEmpty = year == 0 ;
+		isEmpty = isEmpty || (this.dayOfWeek == null || this.dayOfWeek.isEmpty()) ;
+		return isEmpty ;
+	}
 	
 }
