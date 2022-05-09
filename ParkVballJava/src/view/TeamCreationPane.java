@@ -23,9 +23,9 @@ import javafx.scene.layout.GridPane;
 public class TeamCreationPane extends BorderPane {
 
 	private Controller controller ; 
-	private ArrayList<Team> teams ; 
-	private ArrayList<Player> women ; 
-	private ArrayList<Player> men ; 
+//	private ArrayList<Team> teams ; 
+//	private ArrayList<Player> women ; 
+//	private ArrayList<Player> men ; 
 	private LeagueChoosePane leagueChoosePane ; 
 	private ListView<Player> menSelectionView ;
 	private ListView<Player> womenSelectionView ;
@@ -48,9 +48,9 @@ public class TeamCreationPane extends BorderPane {
 	}
 	
 	private void init() {
-		this.teams = new ArrayList<Team>() ; 
-		this.women = new ArrayList<Player>() ; 
-		this.men   = new ArrayList<Player>() ; 
+//		this.teams = new ArrayList<Team>() ; 
+//		this.women = new ArrayList<Player>() ; 
+//		this.men   = new ArrayList<Player>() ; 
 		this.menSelectionView   = new ListView<Player>() ; 
 		this.menSelectionView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		this.womenSelectionView = new ListView<Player>() ; 
@@ -251,21 +251,27 @@ public class TeamCreationPane extends BorderPane {
 	}
 
 	public void setData(ArrayList<Player> men2, ArrayList<Player> women2, ArrayList<Team> teams2) {
-		this.men = men2 ; 
-		this.women = women2 ; 
-		this.teams = teams2 ; 
+//		this.men = men2 ; 
+//		this.women = women2 ; 
+//		this.teams = teams2 ; 
 
 		menSelectionView.getItems().clear();
-		menSelectionView.getItems().setAll(this.men) ;
-		this.menCountLabel.setText("Men: " + this.men.size()) ; 
+		menSelectionView.getItems().setAll(men2) ;
+		this.menCountLabel.setText("Men: " + men2.size()) ; 
 
 		womenSelectionView.getItems().clear();
-		womenSelectionView.getItems().setAll(this.women) ; 
-		this.womenCountLabel.setText("Women: " + this.women.size()) ;
+		womenSelectionView.getItems().setAll(women2) ; 
+		this.womenCountLabel.setText("Women: " + women2.size()) ;
 		
 		this.teamSelectionView.getItems().clear(); 
-		this.teamSelectionView.getItems().setAll(this.teams) ;
-		this.teamCountLabel.setText("Teams: " + this.teams.size()) ; 
+		this.teamSelectionView.getItems().setAll(teams2) ;
+		this.teamCountLabel.setText("Teams: " + teams2.size()) ; 
 		
+	}
+
+	public void updateLeagueTeamList(ArrayList<Team> newTeams) {
+		this.teamSelectionView.getItems().clear(); 
+		this.teamSelectionView.getItems().setAll(newTeams) ;
+		this.teamCountLabel.setText("Teams: " + newTeams.size()) ; 
 	}
 }

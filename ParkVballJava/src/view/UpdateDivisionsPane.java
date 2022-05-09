@@ -49,7 +49,6 @@ public class UpdateDivisionsPane extends BorderPane {
 		this.setTop(leagueChoosePane) ;
 	}
 
-
 	private void addBottomPane() {
 		GridPaneControlled bottomPane = new GridPaneControlled() ;
 		bottomPane.setController(this.controller) ;

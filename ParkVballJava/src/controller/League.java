@@ -94,5 +94,9 @@ public class League {
 		isEmpty = isEmpty || (this.dayOfWeek == null || this.dayOfWeek.isEmpty()) ;
 		return isEmpty ;
 	}
+
+	public boolean isMissingDivisionName() {
+		return this.divisionName == null || this.divisionName.isEmpty() ;
+	}
 	
 }

@@ -90,5 +90,9 @@ public class Team {
 		string += " " + woman.getFirstName() + " " + woman.getLastName() + ", " + man.getFirstName() + " " + man.getLastName() + " " + teamId ;
 		return string ; 
 	}
+
+	public boolean isMissingDivisionName() {
+		return this.divisionName == null || this.divisionName.isEmpty() ;
+	}
 	
 }

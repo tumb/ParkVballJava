@@ -2,9 +2,11 @@ package view;
 
 import controller.Controller;
 import controller.TeamRecentStandings;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -13,6 +15,7 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 	
 	private Controller controller ; 
 	private TeamRecentStandings teamRecentStandings ; 
+	private Label teamNameLabel ;
 	
 	public UpdateDivisionsSingleTeamGridPane(Controller controller, TeamRecentStandings teamRecentStandings) {
 		this.controller = controller ; 
@@ -27,13 +30,27 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 		
 		Label winsLabel = new Label("" + this.teamRecentStandings.getWins()) ;
 		Label lossesLabel = new Label("" + this.teamRecentStandings.getLosses()) ;
-		Label teamNameLabel = new Label(this.teamRecentStandings.getTeam().getTeamName()) ; 
+		teamNameLabel = new Label(this.teamRecentStandings.getTeam().getTeamName()) ; 
 		teamNameLabel = setDivisionColor(teamNameLabel) ;
 		
 		ListView<String> divisionNameChoices = buildDivisionNameChoices() ;
 		divisionNameChoices.getSelectionModel().select(this.teamRecentStandings.getTeam().getDivisionName());
+
 		Button submitButton = new Button("Submit") ; 
-		
+		submitButton.setStyle("-fx-background-color: lightgreen; ") ;
+		EventHandler<MouseEvent> addWinsEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				String divisionName = divisionNameChoices.getSelectionModel().getSelectedItem() ;
+				teamRecentStandings.getTeam().setDivisionName(divisionName);
+				controller.saveNewDivisionForTeam(teamRecentStandings.getTeam());
+				submitButton.setStyle("-fx-background-color: pink; ") ;
+				teamNameLabel = setDivisionColor(teamNameLabel) ;
+			}
+		};
+		submitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, addWinsEvent);
+
+
 		int x = 0 ; 
 		int y = 0 ; 
 		this.add(teamNameLabel, x, y);

@@ -754,7 +754,7 @@ where
 		}
 		else {
 			insertSql += " (select divisionid from parkvball.division d where d.leagueid = " + buildLeagueSubquery(team.getLeague()) ;
-			insertSql += " and d.divisionname = '" + divisionName + "' " ;
+			insertSql += " and d.divisionname = '" + divisionName + "' )" ;
 		}
 		insertSql += ") " ;
 		
@@ -785,6 +785,24 @@ where
 			allMatches.addAll(fetchMatches(league, date)) ; 
 		}
 		return allMatches ;
+	}
+
+	public boolean updateDivisionOfTeam(Team team) {
+		String updateSql = "update parkvball.team set divisionid = " ;
+		updateSql += "(select divisionid from parkvball.division d where d.leagueid = " + buildLeagueSubquery(team.getLeague()) ;
+		updateSql += " and d.divisionName = '" + team.getDivisionName() + "' ) " ;
+		updateSql += " where teamid = " + team.getTeamId() ; 
+		boolean success = false ; 
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement();
+			statement.executeUpdate(updateSql) ;
+			success = true ; 
+		} catch (SQLException exception) {
+			success = false ;
+			System.out.println(exception.getMessage()) ;
+			System.out.println("updateSql: " + updateSql) ; 
+		}
+		return success ; 
 	}
 
 }

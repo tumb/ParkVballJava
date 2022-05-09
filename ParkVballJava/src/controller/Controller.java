@@ -101,6 +101,9 @@ public class Controller {
 		else if(this.isTeamRecord) {
 			this.displayTeamRecord() ; 
 		}
+		else if(this.isCreateTeamsScreen) {
+			updateExistingTeams() ;
+		}
 		updateSchedulingDisplay() ; 
 	}
 	
@@ -135,10 +138,18 @@ public class Controller {
 		else if(this.isTeamRecord) {
 			this.displayTeamRecord() ; 
 		}
+		else if(this.isCreateTeamsScreen) {
+			updateExistingTeams() ;
+		}
 	}
 
-	public void setLeagueDivisionName(String newValue) {
-		this.selectedLeague.setDivisionName(newValue) ; 
+	private void updateExistingTeams() {
+   		ArrayList<Team> teams = this.mySqlDatabase.fetchTeams(this.selectedLeague) ;
+   		this.viewFX.updateLeagueTeamList(teams) ; 
+	}
+
+	public void setLeagueDivisionName(String newDivisionName) {
+		this.selectedLeague.setDivisionName(newDivisionName) ; 
 		updateSchedulingDisplay() ; 
 	}
 
@@ -541,6 +552,15 @@ public class Controller {
 	}
 
 	public void submitNewTeam(Team team) {
+		if(team == null) {
+			String title = "Unable to Save" ;
+			String message = "Team is missing. Did you add it? Did you select it in the team section? " ;
+			this.viewFX.popupWindow(title, message) ;
+			return ; 
+		}
+		if(team.isMissingDivisionName() && ! this.selectedLeague.isMissingDivisionName() ) {
+			team.setDivisionName(this.selectedLeague.getDivisionName()) ;
+		}
 		boolean success = this.mySqlDatabase.insertNewTeam(team) ;
 		String title = "Save Failed" ;
 		String message = "Unable to save " + team.getTeamName() ;
@@ -588,6 +608,10 @@ public class Controller {
 			allRecentStandings.add(teamRecentStandings) ;
 		} // end of for team(i) loop
 		return allRecentStandings;
+	}
+
+	public void saveNewDivisionForTeam(Team team) {
+		this.mySqlDatabase.updateDivisionOfTeam(team) ;
 	}
 
 }

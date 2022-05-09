@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 import controller.Controller;
 import controller.TeamRecentStandings;
+import javafx.geometry.Insets;
 
 public class UpdateDivisionsAllTeamsGridPane extends GridPaneControlled {
 
 	public UpdateDivisionsAllTeamsGridPane(Controller controller) {
 		this.controller = controller ; 
-		
+		this.setPadding(new Insets(10, 10, 10, 10));
 	}
 	
 	

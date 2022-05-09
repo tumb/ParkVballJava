@@ -224,13 +224,12 @@ public class ApplicationFX extends Application {
 		baseScene.setRoot(this.updateDivisionsPane) ; 
 	}
 
-	public void removeDivisionFromLeagueChoosePane() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void updateRecentStandings(ArrayList<TeamRecentStandings> teamRecentStandings) {
 		this.updateDivisionsPane.setTeamRecentStandings(teamRecentStandings) ; 
+	}
+
+	public void updateLeagueTeamList(ArrayList<Team> teams) {
+		this.createTeamsPane.updateLeagueTeamList(teams) ;
 	}
 	
 	// A better popup would be like this:
