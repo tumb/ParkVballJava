@@ -17,6 +17,9 @@ public class Controller {
 	private League selectedLeague ; 
 	private String matchDate ; // This must be in yyyy-mm-dd format. It is the match date where we will create or modify league matches. 
 	private ArrayList<Match> selectedMatches ; 
+	private String[] workingTeamNames ; // The teams currently active in scheduling (or other subtask)
+	private boolean isNewTeamList ; // Flag that the set of teams has changed.
+	
 	private boolean isAdminScreen ; 
 	private boolean isResultsScreen ; 
 	private boolean isSchedulingScreen ; 
@@ -87,6 +90,7 @@ public class Controller {
 
 	public void setLeagueDay(String day) { // Set the slected day of week for the league
 		this.selectedLeague.setDayOfWeek(day) ; 
+		this.isNewTeamList = true ; 
 		ObservableList<String> matchDates = buildDateList(this.selectedLeague) ;
 		this.viewFX.setNewMatchDates(matchDates) ;
 		if(isSchedulingScreen) {
@@ -121,6 +125,7 @@ public class Controller {
 
 	public void setLeagueYear(String year) {
 		this.selectedLeague.setYear(year) ; 
+		this.isNewTeamList = true ; 
 		ObservableList<String> dateList = buildDateList(this.selectedLeague) ;
 		this.viewFX.setNewMatchDates(dateList) ;
 		updateSchedulingDisplay() ; 
@@ -150,6 +155,7 @@ public class Controller {
 
 	public void setLeagueDivisionName(String newDivisionName) {
 		this.selectedLeague.setDivisionName(newDivisionName) ; 
+		this.isNewTeamList = true ;
 		updateSchedulingDisplay() ; 
 	}
 
@@ -612,6 +618,27 @@ public class Controller {
 
 	public void saveNewDivisionForTeam(Team team) {
 		this.mySqlDatabase.updateDivisionOfTeam(team) ;
+	}
+
+	public ArrayList<String> getTeamMatchCount() {
+		ArrayList<String> teamCountLabels = new ArrayList<String>() ;
+		if(this.isNewTeamList) {
+			this.workingTeamNames = fetchTeamList(selectedLeague) ;
+			this.isNewTeamList = false ;
+		}
+		for(int i = 0 ; i < this.workingTeamNames.length ; i++) {
+			String teamName = this.workingTeamNames[i] ; 
+			int count = 0 ; 
+			for(int j = 0 ; j < this.selectedMatches.size() ; j++) {
+				Match match = this.selectedMatches.get(j) ; 
+				if(teamName.equals(match.getTeamAName()) || teamName.equals(match.getTeamBName())) {
+					count++ ; 
+				}
+			}
+			teamCountLabels.add(count + " " + teamName) ;
+		}
+		
+		return teamCountLabels ;
 	}
 
 }

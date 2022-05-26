@@ -24,6 +24,7 @@ public class SchedulePane extends GridPaneControlled {
 	private ListView<String> teamBList;
 	private ListView<String> opponentsList ; 
 	private ListView<String> selectedMatchesList ; 
+	private ListView<String> teamCountList ; 
 	private Label opponentsLabel ;
 	private TextField dateField ; 
 
@@ -34,6 +35,7 @@ public class SchedulePane extends GridPaneControlled {
 		this.setHgap(5);
 
 		this.opponentsLabel = new Label("opponents") ;
+		this.teamCountList = new ListView<String>() ; 
 		
 		//################# Set up top section of pane #############################
 		Label yearLabel = new Label("Year");
@@ -107,7 +109,9 @@ public class SchedulePane extends GridPaneControlled {
 			@Override
 			public void handle(MouseEvent event) {
 				controller.addMatchToSelections();
+				updateTeamMatchCount() ;
 			}
+
 		};
 		addMatchButton.addEventFilter(MouseEvent.MOUSE_CLICKED, addMatchEvent);
 		
@@ -117,6 +121,7 @@ public class SchedulePane extends GridPaneControlled {
 			@Override
 			public void handle(MouseEvent event) {
 				controller.removeMatchFromSelections();
+				updateTeamMatchCount() ;
 			}
 		};
 		removeMatch.addEventFilter(MouseEvent.MOUSE_CLICKED, removeMatchEvent);
@@ -196,8 +201,10 @@ public class SchedulePane extends GridPaneControlled {
 
 		y = matchY + 4;
 		this.add(this.opponentsLabel, 0, y);
+		this.add(new Label("Count (saved or not)"), 3, y);
 		y++;
 		this.add(opponentsList, 0, y);
+		this.add(teamCountList, 3, y);
 	}
 
 	public void updateTeamnames(String[] teamNamesForScheduling) {
@@ -241,6 +248,7 @@ public class SchedulePane extends GridPaneControlled {
 		ObservableList<String> allMatchesObservable = FXCollections.observableArrayList(matchStrings) ; 
 		this.selectedMatchesList.getItems().clear() ; 
 		this.selectedMatchesList.setItems(allMatchesObservable) ; 
+		this.updateTeamMatchCount() ;
 	}
 
 	public void removeFromTeamList(String teamName, boolean isTeamA) {
@@ -259,4 +267,11 @@ public class SchedulePane extends GridPaneControlled {
 		this.teamAList.getItems().add(matchToRemove.getTeamAName()) ;
 		this.teamBList.getItems().add(matchToRemove.getTeamBName()) ;
 	}
+	
+	private void updateTeamMatchCount() {
+		ArrayList<String> teamMatchCounts = this.controller.getTeamMatchCount() ;
+		this.teamCountList.getItems().clear();
+		this.teamCountList.getItems().setAll(teamMatchCounts) ;
+	}
+
 }

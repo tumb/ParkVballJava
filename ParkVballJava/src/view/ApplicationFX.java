@@ -11,10 +11,12 @@ import controller.TeamRecentStandings;
 import controller.TeamStandings;
 import javafx.application.Application ;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -118,8 +120,19 @@ public class ApplicationFX extends Application {
 		stage.setTitle(title) ;
 		Label label = new Label(message) ;
 		Button okButton = new Button("OK") ; 
+		EventHandler<MouseEvent> okEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				stage.close() ;
+			}
+		};
+		okButton.addEventFilter(MouseEvent.MOUSE_CLICKED, okEvent);
+
 		borderPane.setCenter(label) ;
-		borderPane.setBottom(okButton) ;
+		BorderPane bottomPane = new BorderPane() ; 
+		bottomPane.setCenter(okButton) ; 
+		borderPane.setBottom(bottomPane) ;
+		
 		stage.show() ; 
 		return true ;
 	}
@@ -209,8 +222,6 @@ public class ApplicationFX extends Application {
 		}
 //		this.addPlayersPane.setPlayers(existingPlayers) ;
 		baseScene.setRoot(this.createTeamsPane) ; 
-		
-		
 	}
 
 	public void setCreateTeamsPaneData(ArrayList<Player> men, ArrayList<Player> women, ArrayList<Team> teams) {
