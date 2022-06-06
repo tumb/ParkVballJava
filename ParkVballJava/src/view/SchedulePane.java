@@ -126,6 +126,16 @@ public class SchedulePane extends GridPaneControlled {
 		};
 		removeMatch.addEventFilter(MouseEvent.MOUSE_CLICKED, removeMatchEvent);
 		
+		Button deleteMatch = new Button("Delete Match") ;
+		deleteMatch.setStyle("-fx-background-color: pink; ") ; 
+		EventHandler<MouseEvent> deleteMatchEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				deleteMatchFromDatabase();
+				updateTeamMatchCount() ;
+			}
+		};
+		deleteMatch.addEventFilter(MouseEvent.MOUSE_CLICKED, deleteMatchEvent);
 		
 		Button submitScheduleButton = new Button("Save All Matches");
 		submitScheduleButton.setStyle("-fx-background-color: lightgreen; ") ;
@@ -136,6 +146,16 @@ public class SchedulePane extends GridPaneControlled {
 			}
 		};
 		submitScheduleButton.addEventFilter(MouseEvent.MOUSE_CLICKED, submitEvent) ;
+
+		Button changeDateButton = new Button("Change Date (rainout)");
+		changeDateButton.setStyle("-fx-background-color: lightblue; ") ;
+		EventHandler<MouseEvent> changeDateEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				controller.displayChangeScheduleDatePane();
+			}
+		};
+		changeDateButton.addEventFilter(MouseEvent.MOUSE_CLICKED, changeDateEvent) ;
 
 
 		Button deleteAllButton = new Button("Delete All From Database");
@@ -181,8 +201,11 @@ public class SchedulePane extends GridPaneControlled {
 		z++ ; 
 		buttonPane.add(removeMatch, 0, z) ;
 		z++ ; 
-		buttonPane.add(submitScheduleButton, 0, z);
+		buttonPane.add(deleteMatch, 0, z) ;
+		z++ ; 
+		buttonPane.add(changeDateButton, 0, z);
 		z++ ;
+		buttonPane.add(submitScheduleButton, 0, z);
 		z++ ;
 		buttonPane.add(deleteAllButton, 0, z);
 		z++ ;
@@ -274,4 +297,16 @@ public class SchedulePane extends GridPaneControlled {
 		this.teamCountList.getItems().setAll(teamMatchCounts) ;
 	}
 
+	private void deleteMatchFromDatabase() {
+		String matchAsString = selectedMatchesList.getSelectionModel().getSelectedItem() ;
+		Match matchToDelete = new Match(matchAsString) ; 
+		boolean success = this.controller.deleteSingleMatch(matchToDelete) ;
+		String title = "Deleting Match" ; 
+		String message = "Deleted Match " + matchToDelete ; 
+		if(!success) {
+			message = "Failed to delete " + matchAsString  ;
+		}
+		this.controller.displayPopup(title, message);
+	}
+	
 }

@@ -40,6 +40,7 @@ public class ApplicationFX extends Application {
 	private AddPlayersPane addPlayersPane ; 
 	private TeamCreationPane createTeamsPane ; 
 	private UpdateDivisionsPane updateDivisionsPane ; 
+	private ChangeDatesPane changeDatesPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -241,6 +242,14 @@ public class ApplicationFX extends Application {
 
 	public void updateLeagueTeamList(ArrayList<Team> teams) {
 		this.createTeamsPane.updateLeagueTeamList(teams) ;
+	}
+
+	public void displayChangeScheduleDatePane(String[] existingDates) {
+		if(this.changeDatesPane == null) {
+			this.changeDatesPane = new ChangeDatesPane(this.controller) ;
+		}
+		this.changeDatesPane.setExistingDates(existingDates) ;
+		baseScene.setRoot(this.changeDatesPane) ; 
 	}
 	
 	// A better popup would be like this:

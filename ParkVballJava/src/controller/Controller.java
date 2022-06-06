@@ -333,7 +333,6 @@ public class Controller {
 		if(this.selectedLeague.isLeagueSelected() && isValidDate(matchDate)) {
 			this.viewFX.displayTeamNoShowPane(this.selectedLeague, this.matchDate) ;
 		}
-		
 	}
 
 	private boolean isValidDate(String date) {
@@ -384,15 +383,17 @@ public class Controller {
 		success = this.mySqlDatabase.deleteOneMatch(match) ;
 		// remove from controller list of matches?
 		// remove from the gridpane
-		this.viewFX.removeSingleResultPane(match) ; 
-		String resultToDisplay = "Match "+ match.getTeamAName() + " vs " + match.getTeamBName() ;
-		if(success) {
-			resultToDisplay += " deleted." ;
+		if(this.isResultsScreen) {
+			this.viewFX.removeSingleResultPane(match) ; 
+			String resultToDisplay = "Match "+ match.getTeamAName() + " vs " + match.getTeamBName() ;
+			if(success) {
+				resultToDisplay += " deleted." ;
+			}
+			else {
+				resultToDisplay += " NOT deleted." ;
+			}
+			this.viewFX.popupWindow("Delete result",  resultToDisplay) ;
 		}
-		else {
-			resultToDisplay += " NOT deleted." ;
-		}
-		this.viewFX.popupWindow("Delete result",  resultToDisplay) ; 
 		return success ; 
 	}
 
@@ -640,5 +641,28 @@ public class Controller {
 		
 		return teamCountLabels ;
 	}
+
+	public void displayChangeScheduleDatePane() {
+		String[] existingDates = this.mySqlDatabase.fetchMatchDates(this.selectedLeague) ;
+		this.viewFX.displayChangeScheduleDatePane(existingDates) ;
+	}
+
+	public void changeScheduleDate(String previousDate, String newDate) {
+		boolean success = false ;
+		String title = "Date of matches change" ; 
+		String message = "Previous date, " + previousDate + ", is now " + newDate ; 
+		if(isValidDate(previousDate) && isValidDate(newDate)) {
+			success = this.mySqlDatabase.updateDate(previousDate, newDate) ;
+			if(!success) {
+				message = "Unable to save the change in date. " ; 
+			}
+		}
+		else {
+			success = false ; 
+			message = "One of the dates is invalid. " + previousDate + " or " + newDate ;
+		}
+		this.displayPopup(title, message);
+	}
+
 
 }

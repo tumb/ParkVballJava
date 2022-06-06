@@ -805,4 +805,20 @@ where
 		return success ; 
 	}
 
+	public boolean updateDate(String previousDate, String newDate) {
+		String updateSql = "update parkvball.schedule set MatchDate = '" + newDate + "' " ;
+		updateSql += " where MatchDate = '" + previousDate + "'" ; 
+		boolean success = false ; 
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement();
+			statement.executeUpdate(updateSql) ;
+			success = true ; 
+		} catch (SQLException exception) {
+			success = false ;
+			System.out.println(exception.getMessage()) ;
+			System.out.println("updateSql: " + updateSql) ; 
+		}
+		return success ; 
+	}
+
 }
