@@ -1,5 +1,8 @@
 package controller;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,15 +10,16 @@ import java.util.Map;
 import database.MySql;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import view.ApplicationFX;
+import view.LeagueChoosePane;
 
 public class Controller {
 	private MySql mySqlDatabase ;
 	private ApplicationFX viewFX ; 
 	
 	private League selectedLeague ; 
-	private String matchDate ; // This must be in yyyy-mm-dd format. It is the match date where we will create or modify league matches. 
+	private String matchDate ; // This must be in yyyy-mm-dd format. It is the match date where we will create or modify league matches.
+	private DateTimeFormatter dateFormatter ;
 	private ArrayList<Match> selectedMatches ; 
 	private String[] workingTeamNames ; // The teams currently active in scheduling (or other subtask)
 	private boolean isNewTeamList ; // Flag that the set of teams has changed.
@@ -29,6 +33,7 @@ public class Controller {
 	private boolean isAddPlayersScreen ;
 	private boolean isCreateTeamsScreen ; 
 	private boolean isUpdateDivisionsScreen ;
+	private LeagueChoosePane leagueChoosePane ;
 	
 	public static void main(String[] arguments) {
 		Controller controller = new Controller() ;
@@ -42,6 +47,32 @@ public class Controller {
 		}
 		this.selectedLeague = new League() ; 
 		this.selectedMatches = new ArrayList<Match>() ;
+		setDefaultLeagueAndDate() ; 
+	}
+
+	private void setDefaultLeagueAndDate() {
+		this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd") ;
+		LocalDateTime today = LocalDateTime.now();
+		int year = today.getYear() ;
+		DayOfWeek dayOfWeek = today.getDayOfWeek() ;
+		int value = dayOfWeek.getValue(); // 1 is Monday 7 is Sunday
+		if(dayOfWeek.getValue() > 1 && dayOfWeek.getValue() < 5) {
+			this.selectedLeague.setDayOfWeek("Thursday");
+			int daysAway = 4 - value ; 
+			LocalDateTime thursday = today.plusDays(daysAway) ;
+			this.matchDate = this.dateFormatter.format(thursday) ;
+		}
+		else {
+			this.selectedLeague.setDayOfWeek("Monday");
+			LocalDateTime monday = today ; 
+			if(value > 4) {
+				int daysAway = 8 - value ; 
+				monday = today.plusDays(daysAway) ;
+			}
+			this.matchDate = this.dateFormatter.format(monday) ;
+		}
+		this.selectedLeague.setYear(year) ;
+		this.selectedLeague.setDivisionName("blue") ;
 	}
 
 	public void setView(ApplicationFX view) {
@@ -81,6 +112,7 @@ public class Controller {
 	public void makeSchedule() {
 		viewFX.setMakeSchedulePane() ; 
 		setFlagForScreen("Scheduling") ;
+		viewFX.setDefaults(this.selectedLeague, this.matchDate) ; 
 	}
 	
 	public void returnToHomePane() {
@@ -159,7 +191,7 @@ public class Controller {
 		updateSchedulingDisplay() ; 
 	}
 
-	private void updateSchedulingDisplay() {
+	public void updateSchedulingDisplay() {
 		if(isSchedulingScreen && selectedLeague.isLeagueSelected()) {
 			// Remove any scheduled matches in memory. They're in the database or to be thrown out.
 			this.selectedMatches.clear() ; 
@@ -662,6 +694,41 @@ public class Controller {
 			message = "One of the dates is invalid. " + previousDate + " or " + newDate ;
 		}
 		this.displayPopup(title, message);
+	}
+
+	public boolean checkMatches(ArrayList<Match> matches) {
+		String title = "Check Scheduled Matches" ; 
+		// check for duplicates. I do it hear because I want to identify which matches 
+		// are duplicated. So returning true/false is insufficient.
+		String doubleMatchedTeams = "There are no repeat matches." ;
+		boolean duplicateExists = false ; 
+		for(int i = 0 ; i < matches.size() && !duplicateExists ; i++) {
+			Match match = matches.get(i) ; 
+			String teamA = match.getTeamAName() ;
+			String teamB = match.getTeamBName() ;
+			for(int j = 0 ; j < matches.size() && i != j && !duplicateExists ; j++) {
+				Match x = matches.get(j) ;
+				String xA = x.getTeamAName() ;
+				String xB = x.getTeamBName() ;
+				if((xA.equals(teamA) && xB.equals(teamB)) 
+						|| (xA.equals(teamB) && xB.equals(teamA))) {
+					// duplicate found
+					doubleMatchedTeams = "Duplicate: " + xA + " vs " + xB ;
+					duplicateExists = true ; 
+				}
+			}
+		}
+		displayPopup(title, doubleMatchedTeams) ; 
+		return ! duplicateExists ; 
+		// check for triples
+	}
+
+	public LeagueChoosePane getLeagueChoosePane() {
+		if(this.leagueChoosePane == null) {
+			this.leagueChoosePane = new LeagueChoosePane(this, this.selectedLeague) ;
+			this.leagueChoosePane.setDefaults() ;
+		}
+		return this.leagueChoosePane  ;
 	}
 
 

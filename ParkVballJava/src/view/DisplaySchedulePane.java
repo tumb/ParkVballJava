@@ -31,7 +31,7 @@ public class DisplaySchedulePane extends BorderPane {
 
 	public DisplaySchedulePane(Controller controller) {
 		this.controller = controller ;
-		this.leagueChoosePane = new LeagueChoosePane(controller, controller.getSelectedLeague()) ;
+		this.leagueChoosePane = controller.getLeagueChoosePane() ; 
 		this.setTop(leagueChoosePane) ;
 		
 		GridPaneControlled bottomPane = new GridPaneControlled() ;

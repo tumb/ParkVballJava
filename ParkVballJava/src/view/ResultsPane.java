@@ -18,7 +18,7 @@ public class ResultsPane extends BorderPane {
 	
 	public ResultsPane(Controller controller) {
 		this.controller = controller ;
-		this.leagueChoosePane = new LeagueChoosePane(controller, controller.getSelectedLeague()) ;
+		this.leagueChoosePane = this.controller.getLeagueChoosePane() ;
 		this.setTop(leagueChoosePane) ;
 		this.matchGridPane = new UpdateResultsMatchGrid(controller) ;
 		this.setCenter(matchGridPane) ; 

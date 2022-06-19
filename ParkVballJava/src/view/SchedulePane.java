@@ -27,6 +27,9 @@ public class SchedulePane extends GridPaneControlled {
 	private ListView<String> teamCountList ; 
 	private Label opponentsLabel ;
 	private TextField dateField ; 
+	private ListView<String> yearList ;
+	private ListView<String> dayList ; 
+	private ListView<String> divisionList ;
 
 	public SchedulePane(Controller controller) {
 		this.controller = controller;
@@ -39,7 +42,7 @@ public class SchedulePane extends GridPaneControlled {
 		
 		//################# Set up top section of pane #############################
 		Label yearLabel = new Label("Year");
-		ListView<String> yearList = new ListView<String>();
+		this.yearList = new ListView<String>();
 		yearList.setItems(controller.buildYearList());
 		ChangeListener<String> yearChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
@@ -52,7 +55,7 @@ public class SchedulePane extends GridPaneControlled {
 		yearList.setMinHeight(ApplicationFX.MAX_HEIGHT_OF_SHORT_LIST);
 
 		Label dayLabel = new Label("Day");
-		ListView<String> dayList = new ListView<String>();
+		this.dayList = new ListView<String>();
 		dayList.setItems(controller.buildDayList());
 		ChangeListener<String> dayChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
@@ -65,7 +68,7 @@ public class SchedulePane extends GridPaneControlled {
 
 
 		Label divisionLabel = new Label("Division");
-		ListView<String> divisionList = new ListView<String>();
+		this.divisionList = new ListView<String>();
 		divisionList.setItems(controller.buildDivisionNameList());
 		ChangeListener<String> divisionChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
@@ -308,5 +311,25 @@ public class SchedulePane extends GridPaneControlled {
 		}
 		this.controller.displayPopup(title, message);
 	}
+
+	public void setDefaults(League league, String matchDate) {
+		this.dateField.setText(matchDate);
+		this.dayList.getSelectionModel().select(league.getDayOfWeek()) ;
+		this.divisionList.getSelectionModel().select(league.getDivisionName()) ;
+		this.yearList.getSelectionModel().select("" + league.getYear());
+		this.controller.updateSchedulingDisplay(); 
+	}
 	
+	private void checkScheduleSoFar() {
+		// read in matches scheduled
+		ObservableList<String> listItems = selectedMatchesList.getItems() ;
+		ArrayList<Match> matches = new ArrayList<Match>() ; 
+		for (int i = 0 ; i < matches.size() ; i++) {
+			String string = listItems.get(i) ;
+			Match match = new Match(string) ; 
+			matches.add(match) ; 
+		}
+		// Send to controller to check them.
+		this.controller.checkMatches(matches) ; 
+	}
 }

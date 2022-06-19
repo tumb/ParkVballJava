@@ -251,6 +251,12 @@ public class ApplicationFX extends Application {
 		this.changeDatesPane.setExistingDates(existingDates) ;
 		baseScene.setRoot(this.changeDatesPane) ; 
 	}
+
+	public void setDefaults(League selectedLeague, String matchDate) {
+		if(this.schedulePane != null) {
+			schedulePane.setDefaults(selectedLeague, matchDate) ; 
+		}
+	}
 	
 	// A better popup would be like this:
 //	@Override

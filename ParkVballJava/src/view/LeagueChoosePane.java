@@ -92,8 +92,15 @@ public class LeagueChoosePane extends GridPaneControlled {
 		this.add(dateList, 1, 1) ;
 		this.add(divisionList, 2, 1) ;
 		this.add(yearList, 3, 1) ;
+		
 	}
 	
+	public void setDefaults() {
+		this.yearList.getSelectionModel().select("" + this.league.getYear());
+		this.dayOfWeekList.getSelectionModel().select(this.league.getDayOfWeek());
+		this.divisionList.getSelectionModel().select("blue") ;
+	}
+
 	public void setNewMatchDates(ObservableList<String> newDates) {
 		this.dateList.getItems().clear();
 		this.dateList.setItems(newDates) ;
