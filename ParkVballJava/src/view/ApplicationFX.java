@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -41,6 +42,7 @@ public class ApplicationFX extends Application {
 	private TeamCreationPane createTeamsPane ; 
 	private UpdateDivisionsPane updateDivisionsPane ; 
 	private ChangeDatesPane changeDatesPane ; 
+	private ScrollPane scrollPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -54,8 +56,10 @@ public class ApplicationFX extends Application {
 
 		homeGroup = new Group() ; 
 		baseScene = new Scene(homeGroup, 800, 600) ;
-		this.homePane = paneFactory.getHomePane() ; 
-		baseScene.setRoot(this.homePane) ; 
+		this.homePane = paneFactory.getHomePane() ;
+		this.scrollPane = new ScrollPane() ; 
+		this.scrollPane.setContent(this.homePane);
+		baseScene.setRoot(this.scrollPane) ; 
 		baseScene.setFill(Color.CYAN) ;
 		primaryStage.setScene(baseScene) ;
 		primaryStage.setTitle("Delaware Park Doubles") ; 
@@ -73,7 +77,7 @@ public class ApplicationFX extends Application {
 	public void setCreateLeagueScene() {
 		createLeaguePane = paneFactory.getLeaguePane() ;
 		createLeaguePane.setController(this.controller) ;
-		baseScene.setRoot(createLeaguePane) ; 
+		this.scrollPane.setContent(createLeaguePane);
 		// stage.setScene(leagueScene) ;
 
 	}
@@ -82,11 +86,11 @@ public class ApplicationFX extends Application {
 		if(this.schedulePane == null) {
 			this.schedulePane = new SchedulePane(this.controller) ;
 		}
-		baseScene.setRoot(this.schedulePane) ; 
+		this.scrollPane.setContent(schedulePane);
 	}
 	
 	public void returnToHomePane() {
-		this.baseScene.setRoot(this.homePane) ;
+		this.scrollPane.setContent(this.homePane) ;
 	}
 
 	public void updatesTeamsForScheduling(String[] teamNamesForScheduling) {
@@ -144,7 +148,7 @@ public class ApplicationFX extends Application {
 		}
 		
 		resultsPane.setMatches(matches) ; 
-		baseScene.setRoot(this.resultsPane) ; 
+		this.scrollPane.setContent(this.resultsPane) ; 
 	}
 
 	public void setStandingsPane(ArrayList<TeamStandings> teamStandings ) {
@@ -152,7 +156,7 @@ public class ApplicationFX extends Application {
 			this.standingsPane = new StandingsPane(this.controller) ;
 		}
 		this.standingsPane.setStandings(teamStandings) ; 
-		baseScene.setRoot(this.standingsPane) ; 
+		this.scrollPane.setContent(this.standingsPane) ; 
 	}
 	
 	public void setNewMatchDates(ObservableList<String> matchDates) {
@@ -177,7 +181,7 @@ public class ApplicationFX extends Application {
 
 	public void displayTeamNoShowPane(League league, String matchDate) {
 		TeamNoShowPane teamNoShowPane = new TeamNoShowPane(this.controller, league, matchDate) ;
-		this.baseScene.setRoot(teamNoShowPane) ;
+		this.scrollPane.setContent(teamNoShowPane) ;
 	}
 
 	public void removeSingleResultPane(Match match) {
@@ -189,7 +193,7 @@ public class ApplicationFX extends Application {
 			this.displaySchedulePane = new DisplaySchedulePane(this.controller) ;
 		}
 		this.displaySchedulePane.setSchedule(matches) ; 
-		baseScene.setRoot(this.displaySchedulePane) ; 
+		this.scrollPane.setContent(this.displaySchedulePane) ; 
 	}
 
 	public void setTeamRecordPane(ObservableList<String> teams) {
@@ -197,7 +201,7 @@ public class ApplicationFX extends Application {
 			this.teamRecordPane = new TeamRecordDisplayPane(this.controller) ;
 		}
 		this.teamRecordPane.setTeamsToSelect(teams) ;
-		baseScene.setRoot(this.teamRecordPane) ; 
+		this.scrollPane.setContent(this.teamRecordPane) ; 
 	}
 
 	public void setTeamRecord(Match[] teamMatches, String teamName) {
@@ -209,7 +213,7 @@ public class ApplicationFX extends Application {
 			this.addPlayersPane = new AddPlayersPane(this.controller) ;
 		}
 		this.addPlayersPane.setPlayers(existingPlayers) ;
-		baseScene.setRoot(this.addPlayersPane) ; 
+		this.scrollPane.setContent(this.addPlayersPane) ; 
 		
 	}
 
@@ -221,8 +225,7 @@ public class ApplicationFX extends Application {
 		if(this.createTeamsPane == null) {
 			this.createTeamsPane = new TeamCreationPane(this.controller) ;
 		}
-//		this.addPlayersPane.setPlayers(existingPlayers) ;
-		baseScene.setRoot(this.createTeamsPane) ; 
+		this.scrollPane.setContent(this.createTeamsPane) ; 
 	}
 
 	public void setCreateTeamsPaneData(ArrayList<Player> men, ArrayList<Player> women, ArrayList<Team> teams) {
@@ -233,7 +236,7 @@ public class ApplicationFX extends Application {
 		if(this.updateDivisionsPane == null) {
 			this.updateDivisionsPane = new UpdateDivisionsPane(this.controller) ;
 		}
-		baseScene.setRoot(this.updateDivisionsPane) ; 
+		this.scrollPane.setContent(this.updateDivisionsPane) ; 
 	}
 
 	public void updateRecentStandings(ArrayList<TeamRecentStandings> teamRecentStandings) {
@@ -249,7 +252,7 @@ public class ApplicationFX extends Application {
 			this.changeDatesPane = new ChangeDatesPane(this.controller) ;
 		}
 		this.changeDatesPane.setExistingDates(existingDates) ;
-		baseScene.setRoot(this.changeDatesPane) ; 
+		this.scrollPane.setContent(this.changeDatesPane) ; 
 	}
 
 	public void setDefaults(League selectedLeague, String matchDate) {

@@ -34,6 +34,7 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 		teamNameLabel = setDivisionColor(teamNameLabel) ;
 		
 		ListView<String> divisionNameChoices = buildDivisionNameChoices() ;
+		divisionNameChoices.setMaxHeight(20) ;
 		divisionNameChoices.getSelectionModel().select(this.teamRecentStandings.getTeam().getDivisionName());
 
 		Button submitButton = new Button("Submit") ; 
