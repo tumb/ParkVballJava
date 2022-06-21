@@ -47,6 +47,7 @@ public class UpdateResultsSingleMatchPane extends GridPaneControlled {
 				match.setTeamAWins(extractWins(teamAWins));
 				match.setTeamBWins(extractWins(teamBWins)) ;
 				controller.addWinsEventOneMatch(match);
+				submitButton.setStyle("-fx-background-color: lightblue; ") ;
 			}
 		};
 		submitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, addWinsEvent);

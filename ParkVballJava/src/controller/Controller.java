@@ -357,7 +357,13 @@ public class Controller {
 
 	public void addWinsEventOneMatch(Match match) {
 		if(match.canAddWins()) {
-			this.mySqlDatabase.updateWinsOneMatch(match) ; 
+			boolean success = this.mySqlDatabase.updateWinsOneMatch(match) ;
+			String title = "Updating " + match.getTeamAName() + " vs " + match.getTeamBName() ; 
+			String message = "Succeeded" ;
+			if(! success) {
+				message = "Failed" ; 
+			}
+			this.viewFX.popupWindow(title, message) ; 
 		}
 	}
 

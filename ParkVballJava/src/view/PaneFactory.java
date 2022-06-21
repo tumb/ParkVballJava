@@ -181,25 +181,25 @@ public class PaneFactory {
 		homePane.add(yearList, 0, y) ;
 		homePane.add(this.dayOfWeekList, 1, y) ;
 		y++ ; 
-		homePane.add(displayScheduleButton, 0, y) ;
+		homePane.add(scheduleButton, 0, y) ;
 		y++ ;
-		homePane.add(standingsButton, 0, y) ;
+		homePane.add(addResultsButton, 0, y) ;
+		y++ ;
+		homePane.add(updateDivisionsButton, 0, y) ;
 		y++ ;
 		homePane.add(teamRecordButton, 0, y); 
 		y++ ; 
-		homePane.add(addResultsButton, 0, y) ;
-		y++ ;
-		homePane.add(scheduleButton, 0, y) ;
-		y++ ;
-		homePane.add(modifyLeague, 0, y) ;
-		y++ ;
-		homePane.add(createLeague, 0, y) ;
-		y++ ;
 		homePane.add(addPlayersButton, 0, y) ;
 		y++ ;
 		homePane.add(createTeamsButton, 0, y) ;
 		y++ ;
-		homePane.add(updateDivisionsButton, 0, y) ;
+		homePane.add(displayScheduleButton, 0, y) ;
+		y++ ;
+		homePane.add(standingsButton, 0, y) ;
+		y++ ;
+		homePane.add(modifyLeague, 0, y) ;
+		y++ ;
+		homePane.add(createLeague, 0, y) ;
 		y++ ;
 		
 	}
