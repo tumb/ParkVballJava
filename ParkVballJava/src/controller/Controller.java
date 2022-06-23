@@ -22,6 +22,7 @@ public class Controller {
 	private DateTimeFormatter dateFormatter ;
 	private ArrayList<Match> selectedMatches ; 
 	private String[] workingTeamNames ; // The teams currently active in scheduling (or other subtask)
+	private ObservableList<String> divisionNameList ;
 	private boolean isNewTeamList ; // Flag that the set of teams has changed.
 	
 	private boolean isAdminScreen ; 
@@ -96,8 +97,8 @@ public class Controller {
 	}
 	
 	public ObservableList<String> buildDivisionNameList() {
-		String[] divisionArray = fetchDivisionNameList() ;
-		ObservableList<String> divisionNameList = FXCollections.observableArrayList(divisionArray);
+		String[] divisionArray = fetchDivisionNameList() ; 
+		this.divisionNameList = FXCollections.observableArrayList(divisionArray);
 		return divisionNameList ; 
 	}
 	
@@ -120,12 +121,14 @@ public class Controller {
 		setFlagForScreen("Admin") ;
 	}
 
-	public void setLeagueDay(String day) { // Set the slected day of week for the league
+	public void setLeagueDay(String day) { // Set the selected day of week for the league
 		this.selectedLeague.setDayOfWeek(day) ; 
 		this.isNewTeamList = true ; 
 		ObservableList<String> matchDates = buildDateList(this.selectedLeague) ;
 		this.viewFX.setNewMatchDates(matchDates) ;
 		if(isSchedulingScreen) {
+			this.divisionNameList = this.buildDivisionNameList() ;
+			this.viewFX.updateDivisionsForScheduling(this.divisionNameList) ;
 			this.updateSchedulingDisplay() ;
 		}
 		else if(isStandingsScreen) {
@@ -152,7 +155,12 @@ public class Controller {
 	}
 
 	public String[] fetchDivisionNameList() {
-		return this.mySqlDatabase.fetchDivisionNameList() ;
+		if(this.selectedLeague.isValid()) {
+			return this.mySqlDatabase.fetchDivisionNameList(this.selectedLeague) ;
+		}
+		else {
+			return this.mySqlDatabase.fetchDivisionNameList() ;
+		}
 	}
 
 	public void setLeagueYear(String year) {

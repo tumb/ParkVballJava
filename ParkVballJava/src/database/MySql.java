@@ -98,8 +98,25 @@ public class MySql {
 	}
 	
 	public String[] fetchDivisionNameList() {
-		String query = "select distinct divisionName from parkvball.division " ;
-		
+		String query = "select distinct divisionName from parkvball.division d " ;
+				
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement() ;
+			ResultSet resultSet = statement.executeQuery(query) ;
+			ArrayList<String> allDivisions = new ArrayList<String>() ;
+			while( resultSet.next() ) {
+				allDivisions.add(resultSet.getString("divisionName").toLowerCase()) ; 
+			}
+			return allDivisions.toArray(new String[0] ); 
+		} catch (SQLException testException) {
+			System.out.println(testException.getMessage()) ;
+			System.out.println("query: " + query) ; 
+		} 
+		return new String[0] ; // If the fetch fails return an empty array.
+	}
+	public String[] fetchDivisionNameList(League league) {
+		String query = "select distinct divisionName from parkvball.division d " ;
+			query += " where d.leagueid = " + this.buildLeagueSubquery(league) ;	
 		try {
 			Statement statement = this.MySqlVballConnection.createStatement() ;
 			ResultSet resultSet = statement.executeQuery(query) ;

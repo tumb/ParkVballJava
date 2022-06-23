@@ -260,6 +260,10 @@ public class ApplicationFX extends Application {
 			schedulePane.setDefaults(selectedLeague, matchDate) ; 
 		}
 	}
+
+	public void updateDivisionsForScheduling(ObservableList<String> divisionNameList) {
+		this.schedulePane.setDivisionNames(divisionNameList) ; 
+	}
 	
 	// A better popup would be like this:
 //	@Override

@@ -21,6 +21,7 @@ public class LeagueChoosePane extends GridPaneControlled {
 		ListView <String> dateList ;
 		ListView<String> yearList ;
 		ListView<String> dayOfWeekList ;
+		ChangeListener<String> divisionChange ;
 		
 	public LeagueChoosePane(Controller controller, League defaultLeague) {
 		this.controller = controller;
@@ -47,7 +48,9 @@ public class LeagueChoosePane extends GridPaneControlled {
 		dayOfWeekList.setItems(controller.buildDayList());
 		ChangeListener<String> dayChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				enableListeners(false) ;
 				controller.setLeagueDay(newValue);
+				enableListeners(true) ;
 			}
 		};
 		dayOfWeekList.getSelectionModel().selectedItemProperty().addListener(dayChange) ;
@@ -57,9 +60,11 @@ public class LeagueChoosePane extends GridPaneControlled {
 
 		this.divisionList = new ListView<String>();
 		divisionList.setItems(controller.buildDivisionNameList());
-		ChangeListener<String> divisionChange = new ChangeListener<String>() {
+		this.divisionChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				enableListeners(false) ;
 				controller.setLeagueDivisionName(newValue);
+				enableListeners(true) ;
 			}
 		};
 		divisionList.getSelectionModel().selectedItemProperty().addListener(divisionChange);
@@ -122,5 +127,15 @@ public class LeagueChoosePane extends GridPaneControlled {
 			this.yearList.getSelectionModel().select("" + this.league.getYear());
 			this.dayOfWeekList.getSelectionModel().select(this.league.getDayOfWeek());
 		}
+	}
+	
+	private void enableListeners(boolean enable) {
+		if(enable) {
+			this.divisionList.getSelectionModel().selectedItemProperty().addListener(divisionChange);
+		}
+		else {
+			this.divisionList.getSelectionModel().selectedItemProperty().removeListener(divisionChange);
+		}
+
 	}
 }

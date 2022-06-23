@@ -31,6 +31,9 @@ public class SchedulePane extends GridPaneControlled {
 	private ListView<String> dayList ; 
 	private ListView<String> divisionList ;
 
+	private ChangeListener<String>  divisionChange ; 
+	private ChangeListener<String>  dayChange ; 
+	
 	public SchedulePane(Controller controller) {
 		this.controller = controller;
 		this.setPadding(new Insets(10, 10, 10, 10));
@@ -57,9 +60,11 @@ public class SchedulePane extends GridPaneControlled {
 		Label dayLabel = new Label("Day");
 		this.dayList = new ListView<String>();
 		dayList.setItems(controller.buildDayList());
-		ChangeListener<String> dayChange = new ChangeListener<String>() {
+		dayChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				enableListeners(false) ; 
 				controller.setLeagueDay(newValue);
+				enableListeners(true) ;
 			}
 		};
 		dayList.getSelectionModel().selectedItemProperty().addListener(dayChange) ;
@@ -70,9 +75,11 @@ public class SchedulePane extends GridPaneControlled {
 		Label divisionLabel = new Label("Division");
 		this.divisionList = new ListView<String>();
 		divisionList.setItems(controller.buildDivisionNameList());
-		ChangeListener<String> divisionChange = new ChangeListener<String>() {
+		divisionChange = new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String old, String newValue) {
+				enableListeners(false) ;
 				controller.setLeagueDivisionName(newValue);
+				enableListeners(true) ;
 			}
 		};
 		divisionList.getSelectionModel().selectedItemProperty().addListener(divisionChange);
@@ -331,5 +338,21 @@ public class SchedulePane extends GridPaneControlled {
 		}
 		// Send to controller to check them.
 		this.controller.checkMatches(matches) ; 
+	}
+
+	public void setDivisionNames(ObservableList<String> divisionNameList) {
+		this.divisionList.getItems().clear() ; 
+		this.divisionList.setItems(divisionNameList);
+	}
+
+	private void enableListeners(boolean enable) {
+		if(enable) {
+			divisionList.getSelectionModel().selectedItemProperty().addListener(divisionChange);
+			dayList.getSelectionModel().selectedItemProperty().addListener(dayChange);
+		}
+		else {
+			divisionList.getSelectionModel().selectedItemProperty().removeListener(divisionChange);
+			dayList.getSelectionModel().selectedItemProperty().removeListener(dayChange);
+		}
 	}
 }
