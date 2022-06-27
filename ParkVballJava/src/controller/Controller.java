@@ -710,10 +710,59 @@ public class Controller {
 		this.displayPopup(title, message);
 	}
 
-	public boolean checkMatches(ArrayList<Match> matches) {
+	public void checkMatches(ArrayList<Match> matches) {
 		String title = "Check Scheduled Matches" ; 
 		// check for duplicates. I do it hear because I want to identify which matches 
 		// are duplicated. So returning true/false is insufficient.
+		String message = checkForDuplicates(matches) ;
+		message += "\n" + checkFor3TeamCircles(matches) ;
+		displayPopup(title, message) ; 
+		// check for triples
+	}
+
+	private String checkFor3TeamCircles(ArrayList<Match> matches) {
+		String message = "No 3 team circles found." ;
+		for(int i = 0 ; i < matches.size() ; i++) {
+			Match match = matches.get(i) ; 
+			String teamA = match.getTeamAName() ;
+			String teamB = match.getTeamBName() ;
+			String bOtherOpponent = findBOpponents(matches, i, teamB) ;
+			if("none".equals(bOtherOpponent)) {
+				return "Unable to check triples. Missing match for " + teamB ; 
+			}
+			String aOtherOpponent = findBOpponents(matches, i, teamA) ;
+			if("none".equals(aOtherOpponent)) {
+				return "Unable to check triples. Missing match for " + teamA ; 
+			}
+			if(aOtherOpponent.equals(bOtherOpponent)) {
+				message = "Circle found: " + teamA + ", " + teamB + ", " + aOtherOpponent ;
+			}
+		}
+		return message ;
+	}
+
+	private String findBOpponents(ArrayList<Match> matches, int notI, String team) {
+		String foundTeam = "none" ; 
+		boolean notFound = true ;
+		for(int i = 0 ; notFound && i < matches.size()  ; i++) {
+			if(i != notI) {
+				Match match = matches.get(i) ; 
+				String teamA = match.getTeamAName() ;
+				String teamB = match.getTeamBName() ;
+				if(team.equals(teamA)) {
+					notFound = false ; 
+					foundTeam = teamB ; 
+				}
+				else if(team.equals(teamB)) {
+					notFound = false ; 
+					foundTeam = teamA ; 
+				}
+			}
+		}
+		return foundTeam ;
+	}
+
+	private String checkForDuplicates(ArrayList<Match> matches) {
 		String doubleMatchedTeams = "There are no repeat matches." ;
 		boolean duplicateExists = false ; 
 		for(int i = 0 ; i < matches.size() && !duplicateExists ; i++) {
@@ -732,11 +781,9 @@ public class Controller {
 				}
 			}
 		}
-		displayPopup(title, doubleMatchedTeams) ; 
-		return ! duplicateExists ; 
-		// check for triples
+		return doubleMatchedTeams ; 
 	}
-
+	
 	public LeagueChoosePane getLeagueChoosePane() {
 		if(this.leagueChoosePane == null) {
 			this.leagueChoosePane = new LeagueChoosePane(this, this.selectedLeague) ;

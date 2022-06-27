@@ -167,6 +167,16 @@ public class SchedulePane extends GridPaneControlled {
 		};
 		changeDateButton.addEventFilter(MouseEvent.MOUSE_CLICKED, changeDateEvent) ;
 
+		Button checkScheduleButton = new Button("Check Schedule");
+		checkScheduleButton.setStyle("-fx-background-color: lightblue; ") ;
+		EventHandler<MouseEvent> checkScheduleEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				checkScheduleSoFar();
+			}
+		};
+		checkScheduleButton.addEventFilter(MouseEvent.MOUSE_CLICKED, checkScheduleEvent) ;
+
 
 		Button deleteAllButton = new Button("Delete All From Database");
 		deleteAllButton.setStyle("-fx-background-color: pink ; ") ;
@@ -210,6 +220,8 @@ public class SchedulePane extends GridPaneControlled {
 		buttonPane.add(addMatchButton, 0, z);
 		z++ ; 
 		buttonPane.add(removeMatch, 0, z) ;
+		z++ ; 
+		buttonPane.add(checkScheduleButton, 0, z) ;
 		z++ ; 
 		buttonPane.add(deleteMatch, 0, z) ;
 		z++ ; 
@@ -331,7 +343,7 @@ public class SchedulePane extends GridPaneControlled {
 		// read in matches scheduled
 		ObservableList<String> listItems = selectedMatchesList.getItems() ;
 		ArrayList<Match> matches = new ArrayList<Match>() ; 
-		for (int i = 0 ; i < matches.size() ; i++) {
+		for (int i = 0 ; i < listItems.size() ; i++) {
 			String string = listItems.get(i) ;
 			Match match = new Match(string) ; 
 			matches.add(match) ; 
