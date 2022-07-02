@@ -3,6 +3,9 @@ package controller;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -381,8 +384,28 @@ public class Controller {
 		}
 	}
 
-	private boolean isValidDate(String date) {
-		return ! (date == null || date.isEmpty()) ;
+	private boolean isValidDate(String text) {
+		boolean isValid = ! (text == null || text.isEmpty()) ;
+		try {
+			
+			TemporalAccessor date = this.dateFormatter.parse(text) ;
+			int year = date.get(ChronoField.YEAR) ; 
+			if(year < 1970 || year > 2050) {
+				isValid = false ; 
+			}
+			int month = date.get(ChronoField.MONTH_OF_YEAR) ;
+			if(month < 4 || month > 9) {
+				isValid = false ; 
+			}
+//			int dayOfWeek = date.get(ChronoField.DAY_OF_WEEK) ; // Monday is 1, Thursday is 4.
+//			if(dayOfWeek != 1 && dayOfWeek != 4) {
+//				isValid = false ; 
+//			}
+		} 
+		catch (DateTimeParseException  e) {
+			isValid = false ; 
+		}
+		return isValid ;
 	}
 
 	public String[] fetchTeamList(League league) {
@@ -716,8 +739,17 @@ public class Controller {
 		// are duplicated. So returning true/false is insufficient.
 		String message = checkForDuplicates(matches) ;
 		message += "\n" + checkFor3TeamCircles(matches) ;
+		message += "\n" + checkDate(this.matchDate) ; 
 		displayPopup(title, message) ; 
 		// check for triples
+	}
+
+	private String checkDate(String dateText) {
+		String message = "Something is wrong with this date." ;
+		if(isValidDate(dateText)) {
+			message = "The date appears valid." ; 
+		}
+		return message ;
 	}
 
 	private String checkFor3TeamCircles(ArrayList<Match> matches) {
