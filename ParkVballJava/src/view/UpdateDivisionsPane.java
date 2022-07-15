@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -28,9 +30,11 @@ public class UpdateDivisionsPane extends BorderPane {
 	
 	private void addDivisionChooseRegion() {
 		BorderPane divisionChooseRegion = new BorderPane() ; 
-		
+		TextArea instructions = new TextArea() ; 
+		setInstructions(instructions) ; 
 		GridPane teamHistoriesGrid = new GridPane() ; 
 		
+		divisionChooseRegion.setTop(instructions);
 		divisionChooseRegion.setBottom(teamHistoriesGrid);
 		divisionChooseRegion.setCenter(allTeamsGrid);
 		this.setCenter(divisionChooseRegion);
@@ -41,6 +45,18 @@ public class UpdateDivisionsPane extends BorderPane {
 		
 	}
 
+	private void setInstructions(TextArea textField) {
+		String instructions = " To get started you need to set the day and year. Division won't matter. " ; 
+		instructions += "\n Then you need to choose 2 or more dates. Usually the most recent two dates for your league." ;
+		instructions += "\n To choose more than one date you can select one date and then hold down the shift key while selecting a 2nd date. " ;
+		instructions += "\n This will get all dates between the first and last selected. " ;
+		instructions += "\n The teams will be listed by record during the weeks selected. " ;
+		instructions += "\n Ideally the top 2 or 3 blue teams on your list go up. While the bottom green teams go down." ; 
+		instructions += "\n You need to check for any error due to teams having missed a week. " ; 
+		instructions += "\n And you need to break ties. Teams that have never been in a division move first. After that...? " ; 
+		textField.setText(instructions);
+	}
+	
 	private void addLeaguePane() {
 		this.leagueChoosePane = new LeagueChoosePane(controller, controller.getSelectedLeague()) ;
 		this.leagueChoosePane.removeDivisionSection() ; 

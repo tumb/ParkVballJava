@@ -740,8 +740,52 @@ public class Controller {
 		String message = checkForDuplicates(matches) ;
 		message += "\n" + checkFor3TeamCircles(matches) ;
 		message += "\n" + checkDate(this.matchDate) ; 
+		message += "\n" + checkForRepeats(matches) ; 
+		
 		displayPopup(title, message) ; 
 		// check for triples
+	}
+
+	private String checkForRepeats(ArrayList<Match> matches) {
+		String message = "No repeats found in other weeks. " ; 
+		boolean repeatExists = false ; 
+		for(int i = 0 ; i < matches.size() ; i++) {
+			Match match = matches.get(i) ; 
+			String teamA = match.getTeamAName() ;
+			String teamB = match.getTeamBName() ;
+			Match[] teamMatches = this.mySqlDatabase.fetchMatchesForTeam(this.selectedLeague, teamA) ;
+			for(int j = 0 ; j < teamMatches.length ; j++) {
+				Match otherMatch = teamMatches[j] ;
+				if(isRepeatMatch(match, otherMatch)) {
+					if(! repeatExists) {
+						message = makeRepeatMessage(teamA, teamB, otherMatch) ; 
+						repeatExists = true ; 
+					}
+					else {
+						message += "\n" + makeRepeatMessage(teamA, teamB, otherMatch) ; 
+					}
+				}
+			}
+		}
+		return message ; 
+	}
+	
+	private String makeRepeatMessage(String teamA, String teamB, Match otherMatch) {
+		String message = "Warning: " + teamA + " vs " + teamB + " played " + otherMatch.getDate() ; 
+		return message ;
+	}
+
+	private boolean isRepeatMatch(Match match, Match otherMatch) {
+		String teamA = match.getTeamAName() ;
+		String teamB = match.getTeamBName() ;
+		String date = match.getDate() ; 
+		String otherA = otherMatch.getTeamAName() ;
+		String otherB = otherMatch.getTeamBName() ;
+		String otherDate = otherMatch.getDate() ;
+		boolean isRepeatMatch = (! date.equals(otherDate) 
+				&& ((teamA.equals(otherA) && teamB.equals(otherB))
+					|| (teamB.equals(otherA) && teamA.equals(otherB)))) ;
+		return isRepeatMatch ;
 	}
 
 	private String checkDate(String dateText) {
@@ -795,7 +839,7 @@ public class Controller {
 	}
 
 	private String checkForDuplicates(ArrayList<Match> matches) {
-		String doubleMatchedTeams = "There are no repeat matches." ;
+		String doubleMatchedTeams = "There are no duplicate matches." ;
 		boolean duplicateExists = false ; 
 		for(int i = 0 ; i < matches.size() && !duplicateExists ; i++) {
 			Match match = matches.get(i) ; 

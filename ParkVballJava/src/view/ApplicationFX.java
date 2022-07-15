@@ -27,7 +27,6 @@ public class ApplicationFX extends Application {
 	public static int MAX_HEIGHT_OF_SHORT_LIST = 75 ; 
 	
 	private Controller controller;
-	
 	private Group homeGroup ; 
 	private Scene baseScene ; 
 	private PaneFactory paneFactory ; 
