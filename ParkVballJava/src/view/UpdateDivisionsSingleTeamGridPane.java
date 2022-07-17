@@ -2,13 +2,18 @@ package view;
 
 import controller.Controller;
 import controller.TeamRecentStandings;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 public class UpdateDivisionsSingleTeamGridPane extends GridPane{
@@ -16,6 +21,12 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 	private Controller controller ; 
 	private TeamRecentStandings teamRecentStandings ; 
 	private Label teamNameLabel ;
+	// Set up radio buttons. This is not easily expandable for a 4th choice but I don't see a good way around that. 
+	private RadioButton redDivisionChoice ; 
+	private RadioButton greenDivisionChoice ; 
+	private RadioButton blueDivisionChoice ; 
+	private ToggleGroup divisionChoicesGroup ; 
+	private HBox divisionButtonsBox ; 
 	
 	public UpdateDivisionsSingleTeamGridPane(Controller controller, TeamRecentStandings teamRecentStandings) {
 		this.controller = controller ; 
@@ -24,7 +35,7 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 		this.setHgap(20);
 		ColumnConstraints teamNameConstraint = new ColumnConstraints(80) ; 
 		ColumnConstraints digitConstraint = new ColumnConstraints(10) ;
-		ColumnConstraints divisionsConstraint = new ColumnConstraints(50) ; 
+		ColumnConstraints divisionsConstraint = new ColumnConstraints(180) ; 
 
 		this.getColumnConstraints().addAll(teamNameConstraint, digitConstraint, digitConstraint, divisionsConstraint) ; 
 		
@@ -33,23 +44,23 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 		teamNameLabel = new Label(this.teamRecentStandings.getTeam().getTeamName()) ; 
 		teamNameLabel = setDivisionColor(teamNameLabel) ;
 		
-		ListView<String> divisionNameChoices = buildDivisionNameChoices() ;
-		divisionNameChoices.setMaxHeight(20) ;
-		divisionNameChoices.getSelectionModel().select(this.teamRecentStandings.getTeam().getDivisionName());
-
+		buildDivisionRadioButtons() ;
+		setCurrentDivision() ; 
+		
 		Button submitButton = new Button("Submit") ; 
 		submitButton.setStyle("-fx-background-color: lightgreen; ") ;
-		EventHandler<MouseEvent> addWinsEvent = new EventHandler<MouseEvent>() {
+		EventHandler<MouseEvent> submitNewDivisionEvent = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				String divisionName = divisionNameChoices.getSelectionModel().getSelectedItem() ;
+				Toggle selection = divisionChoicesGroup.getSelectedToggle() ;
+				String divisionName = selection.getUserData().toString() ;
 				teamRecentStandings.getTeam().setDivisionName(divisionName);
 				controller.saveNewDivisionForTeam(teamRecentStandings.getTeam());
 				submitButton.setStyle("-fx-background-color: pink; ") ;
 				teamNameLabel = setDivisionColor(teamNameLabel) ;
 			}
 		};
-		submitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, addWinsEvent);
+		submitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, submitNewDivisionEvent);
 
 
 		int x = 0 ; 
@@ -60,18 +71,57 @@ public class UpdateDivisionsSingleTeamGridPane extends GridPane{
 		x++ ; 
 		this.add(lossesLabel, x, y);
 		x++ ; 
-		this.add(divisionNameChoices, x, y);
+		this.add(divisionButtonsBox, x, y);
 		x++ ; 
 		this.add(submitButton, x, y);
 	}
 
 	
-	private ListView<String> buildDivisionNameChoices() {
-		ListView<String> divisions = new ListView<String>(this.controller.buildDivisionNameList()) ;
-		return divisions ;
+	private void setCurrentDivision() {
+		String currentDivision = this.teamRecentStandings.getTeam().getDivisionName() ;
+		if("red".equals(currentDivision)) {
+			this.redDivisionChoice.setSelected(true);
+		}
+		else if("green".equals(currentDivision)) {
+			this.greenDivisionChoice.setSelected(true);
+		}
+		else if("blue".equals(currentDivision)) {
+			this.blueDivisionChoice.setSelected(true);
+		}
 	}
 
-
+	private void buildDivisionRadioButtons() {
+		this.divisionChoicesGroup = new ToggleGroup() ; 
+		this.divisionButtonsBox = new HBox() ; 
+		this.divisionButtonsBox.setSpacing(20);
+		ObservableList<String> divisionList = this.controller.buildDivisionNameList() ;
+		for(int i = 0 ; i < divisionList.size() ; i++) {
+			String divisionName = divisionList.get(i) ;
+			if("red".equals(divisionName)) {
+				this.redDivisionChoice = new RadioButton("red") ;
+				this.redDivisionChoice.setUserData(divisionName);
+				this.redDivisionChoice.setToggleGroup(divisionChoicesGroup);
+				this.divisionButtonsBox.getChildren().add(this.redDivisionChoice) ;
+				this.redDivisionChoice.setTextFill(Color.RED) ; 
+			}
+			if("green".equals(divisionName)) {
+				this.greenDivisionChoice = new RadioButton("green") ;
+				this.greenDivisionChoice.setUserData(divisionName);
+				this.greenDivisionChoice.setToggleGroup(divisionChoicesGroup);
+				this.divisionButtonsBox.getChildren().add(this.greenDivisionChoice) ;
+				this.greenDivisionChoice.setTextFill(Color.GREEN) ; 
+			}
+			if("blue".equals(divisionName)) {
+				this.blueDivisionChoice = new RadioButton("blue") ;
+				this.blueDivisionChoice.setUserData(divisionName);
+				this.blueDivisionChoice.setToggleGroup(divisionChoicesGroup);
+				this.divisionButtonsBox.getChildren().add(this.blueDivisionChoice) ;
+				this.blueDivisionChoice.setTextFill(Color.BLUE) ; 
+			}
+		}
+	}
+	
+	
 	private Label setDivisionColor(Label label) {
 		label.setTextFill(Color.BLACK) ; 
 		String divisionName = this.teamRecentStandings.getTeam().getDivisionName() ; 
