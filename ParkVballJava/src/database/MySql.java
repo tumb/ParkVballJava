@@ -653,6 +653,29 @@ where
 		return allPlayers ; // If the fetch fails return an empty array.
 	}
 
+	public League fetchLeague(League league) {
+		League existingLeague = null ;
+		String query = " select * from parkvball.league l where l.year = " + league.getYear()
+			+ " and l.Day = '" + league.getDayOfWeek() + "'" ;
+		try {
+			Statement statement = this.MySqlVballConnection.createStatement() ;
+			ResultSet resultSet = statement.executeQuery(query) ;
+			while( resultSet.next() ) {
+				int id = resultSet.getInt("leagueId") ;
+				int year = resultSet.getInt("year") ;
+				String dayOfWeek = resultSet.getString("Day") ; 
+				existingLeague = new League() ;
+				existingLeague.setYear(year);
+				existingLeague.setDayOfWeek(dayOfWeek);
+				existingLeague.setDatabaseId(id); 
+			}
+		} catch (SQLException testException) {
+			System.out.println(testException.getMessage()) ;
+			System.out.println("query: " + query) ; 
+		} 
+		return existingLeague ;
+	}
+
 	public boolean insertPlayer(Player player) {
 		boolean success = true ;
 		String insertSql = "insert into parkvball.player (Firstname, Lastname, Gender, Email, Phone) " ;
@@ -743,6 +766,92 @@ where
 		return teamNames ; 
 	}
 
+	public boolean insertNewLeague(League league) {
+		boolean success = true ;
+		String insertSql = "insert into parkvball.league (year, day) " ;
+		insertSql += " values (" ;
+		insertSql += league.getYear() + ", '" + league.getDayOfWeek() + "' )" ;
+		try {
+			Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+					int result = submitStatement.executeUpdate(insertSql) ;
+					success = success && (result == 1) ;
+		} 
+		catch (SQLException exception) {
+			success = false ; 
+			System.out.println(exception.getMessage()) ;
+			System.out.println("sql: " + insertSql) ; 
+		} 
+		return success ;
+	}
+
+	public boolean insertDivisionsForNew(League league) {
+		String color = "blue" ; 
+		int value = 1 ; 
+				
+		boolean success = true ;
+		String insertStart = "insert into parkvball.division(DivisionName, DivisionValue, LeagueId) values (" ;
+		String insertEnd = this.buildLeagueSubquery(league) + " )" ;
+
+		String insertSql = insertStart ; 
+		insertSql += " '" + color + "', " + value + ", " ;
+		insertSql += insertEnd ; 
+
+		try {
+			Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+					int result = submitStatement.executeUpdate(insertSql) ;
+					success = success && (result == 1) ;
+		} 
+		catch (SQLException exception) {
+			success = false ; 
+			System.out.println(exception.getMessage()) ;
+			System.out.println("sql: " + insertSql) ; 
+		} 
+		
+		// green divsion
+		color = "green" ; 
+		value = 2 ; 
+
+
+		insertSql = insertStart ; 
+		insertSql += " '" + color + "', " + value + ", " ;
+		insertSql += insertEnd ; 
+
+		try {
+			Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+					int result = submitStatement.executeUpdate(insertSql) ;
+					success = success && (result == 1) ;
+		} 
+		catch (SQLException exception) {
+			success = false ; 
+			System.out.println(exception.getMessage()) ;
+			System.out.println("sql: " + insertSql) ; 
+		} 
+		
+		if(league.getNumberOfDivisions() > 2 ) {
+			// red division
+			color = "red" ; 
+			value = 4 ; 
+
+			insertSql = insertStart ; 
+			insertSql += " '" + color + "', " + value + ", " ;
+			insertSql += insertEnd ; 
+
+			try {
+				Statement submitStatement = this.MySqlVballConnection.createStatement() ;
+						int result = submitStatement.executeUpdate(insertSql) ;
+						success = success && (result == 1) ;
+			} 
+			catch (SQLException exception) {
+				success = false ; 
+				System.out.println(exception.getMessage()) ;
+				System.out.println("sql: " + insertSql) ; 
+			} 
+			
+		}
+		
+		return success ;
+	}
+
 	public boolean insertNewTeam(Team team) {
 		boolean success = true ;
 		String insertSql = "insert into parkvball.team (teamname, maleid, femaleid, leagueid, divisionid) " ;
@@ -781,7 +890,8 @@ where
 					int result = submitStatement.executeUpdate(insertSql) ;
 					success = success && (result == 1) ;
 				}
-		} catch (SQLException exception) {
+		} 
+		catch (SQLException exception) {
 			success = false ; 
 			System.out.println(exception.getMessage()) ;
 			System.out.println("sql: " + insertSql) ; 

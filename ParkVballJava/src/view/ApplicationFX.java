@@ -21,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import view.playoffssetup.PlayoffsSetupPane;
 
 public class ApplicationFX extends Application {
 
@@ -30,18 +31,20 @@ public class ApplicationFX extends Application {
 	private Group homeGroup ; 
 	private Scene baseScene ; 
 	private PaneFactory paneFactory ; 
-	private GridPaneControlled createLeaguePane ; 
+	private ScrollPane scrollPane ; 
+
+	private AddPlayersPane addPlayersPane ; 
+	private CreateLeaguePane createLeaguePane ; 
 	private GridPaneControlled homePane ; 
 	private SchedulePane schedulePane ; 
 	private ResultsPane resultsPane ; 
 	private StandingsPane standingsPane ; 
 	private DisplaySchedulePane displaySchedulePane ; 
 	private TeamRecordDisplayPane teamRecordPane ; 
-	private AddPlayersPane addPlayersPane ; 
 	private TeamCreationPane createTeamsPane ; 
 	private UpdateDivisionsPane updateDivisionsPane ; 
+	private PlayoffsSetupPane playoffSetupPane ; 
 	private ChangeDatesPane changeDatesPane ; 
-	private ScrollPane scrollPane ; 
 	
 	public static void main(String[] arguments){
 		launch(arguments) ;
@@ -74,11 +77,10 @@ public class ApplicationFX extends Application {
 	}
 	
 	public void setCreateLeagueScene() {
-		createLeaguePane = paneFactory.getLeaguePane() ;
-		createLeaguePane.setController(this.controller) ;
+		if(this.createLeaguePane == null) {
+			this.createLeaguePane = new CreateLeaguePane(this.controller) ;
+		}
 		this.scrollPane.setContent(createLeaguePane);
-		// stage.setScene(leagueScene) ;
-
 	}
 
 	public void setMakeSchedulePane() {
@@ -231,6 +233,14 @@ public class ApplicationFX extends Application {
 		this.createTeamsPane.setData(men, women, teams); 
 	}
 
+	public void setPlayoffsSetupPane(ArrayList<TeamStandings> standings) {
+		if(this.playoffSetupPane == null) {
+			this.playoffSetupPane = new PlayoffsSetupPane(this.controller) ;
+		}
+		this.playoffSetupPane.updateStandings(standings) ; 
+		this.scrollPane.setContent(this.playoffSetupPane) ; 
+	}
+
 	public void setUpdateDivisionsPane() {
 		if(this.updateDivisionsPane == null) {
 			this.updateDivisionsPane = new UpdateDivisionsPane(this.controller) ;
@@ -263,7 +273,7 @@ public class ApplicationFX extends Application {
 	public void updateDivisionsForScheduling(ObservableList<String> divisionNameList) {
 		this.schedulePane.setDivisionNames(divisionNameList) ; 
 	}
-	
+
 	// A better popup would be like this:
 //	@Override
 //	public void start(final Stage primaryStage) {

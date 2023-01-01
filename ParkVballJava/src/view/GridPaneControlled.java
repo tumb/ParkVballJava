@@ -12,7 +12,9 @@ public class GridPaneControlled extends GridPane {
 
 	public void setController(Controller controller) {
 		this.controller = controller;
-	} 
+	}
+
+
 	
 	
 

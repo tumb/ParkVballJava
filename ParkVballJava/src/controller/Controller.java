@@ -36,6 +36,7 @@ public class Controller {
 	private boolean isTeamRecord ;
 	private boolean isAddPlayersScreen ;
 	private boolean isCreateTeamsScreen ; 
+	private boolean isPlayoffsSetupScreen;
 	private boolean isUpdateDivisionsScreen ;
 	private LeagueChoosePane leagueChoosePane ;
 	
@@ -105,14 +106,6 @@ public class Controller {
 		return divisionNameList ; 
 	}
 	
-	public void leagueSubmitButtonPress() {
-		// TODO Auto-generated method stub
-		// verify that league can be created
-		// create data in database
-		// report results to user
-		System.out.println("leagueSubmit clicked.") ; 
-	}
-
 	public void makeSchedule() {
 		viewFX.setMakeSchedulePane() ; 
 		setFlagForScreen("Scheduling") ;
@@ -313,6 +306,7 @@ public class Controller {
 		this.isAddPlayersScreen  = false ; 
 		this.isCreateTeamsScreen = false ;
 		this.isUpdateDivisionsScreen  = false ; 
+		this.isPlayoffsSetupScreen = false ; 
 		
 		if(string.equals("Results")) {
 			this.isResultsScreen = true ; 
@@ -337,6 +331,9 @@ public class Controller {
 		}
 		else if(string.equals("Create Teams" )) {
 			this.isCreateTeamsScreen   = true ; 
+		}
+		else if(string.equals("Playoffs Setup" )) {
+			this.isPlayoffsSetupScreen   = true ; 
 		}
 		else if(string.equals("Update Divisions" )) {
 			this.isUpdateDivisionsScreen   = true ; 
@@ -482,17 +479,22 @@ public class Controller {
 
 	public void displayStandings() {
 		this.setFlagForScreen("Standings") ;
+		ArrayList<TeamStandings> standings = computeAllStandingsForLeague(this.selectedLeague); 
+		// send to the view
+		this.viewFX.setStandingsPane(standings); 
+	}
+
+	private ArrayList<TeamStandings> computeAllStandingsForLeague(League league) {
 		// gather data needed for standings from database
-		ArrayList<TeamStandings> standings = this.mySqlDatabase.fetchTeamsForStandings(this.selectedLeague) ; 
+		ArrayList<TeamStandings> standings = this.mySqlDatabase.fetchTeamsForStandings(league) ; 
 		// create a map into standings 
 		Map<String, Integer> indexMap = buildStandingsMap(standings) ; 
 		// get all the matches
-		ArrayList<Match> matches = this.mySqlDatabase.fetchMatchesForStandings(this.selectedLeague) ; 
+		ArrayList<Match> matches = this.mySqlDatabase.fetchMatchesForStandings(league) ; 
 		// fill match data into standings
 		standings = this.computePoints(standings, matches, indexMap) ; 
-		standings = this.computeRanks(standings) ; 
-		// send to the view
-		this.viewFX.setStandingsPane(standings); 
+		standings = this.computeRanks(standings) ;
+		return standings;
 	}
 
 	private ArrayList<TeamStandings> computeRanks(ArrayList<TeamStandings> standings) {
@@ -612,6 +614,36 @@ public class Controller {
 		
 	}
 
+	public void submitNewLeague(League league) {
+		System.out.println("submitNewLeague() begin. League: " + league) ; 
+		// Need to verify league
+		if(league.isValid()) {
+		// Check if league is already in database
+			League existingLeague = this.mySqlDatabase.fetchLeague(league) ;
+			if(existingLeague == null) {
+				// submit the league
+				boolean success = this.mySqlDatabase.insertNewLeague(league) ;
+				// submit the divisions for this league
+				if(success) {
+					success = this.mySqlDatabase.insertDivisionsForNew(league) ; 
+				}
+				String title = "League Created" ; 
+				String message = "League with id " + league.getDatabaseId() + " for " + league.getDayOfWeek() + " " + league.getYear() ;
+				if(! success) {
+					title = "Failed to create league" ; 
+					message = "Failed attempt to create: " + message ; 
+				}
+				this.viewFX.popupWindow(title, message) ; 
+			}
+			else {
+				String message = "League with id " + existingLeague.getDatabaseId() ;
+				message += " has day " + existingLeague.getDayOfWeek() + " and year " + existingLeague.getYear() ; 
+				viewFX.popupWindow("League Already Exists", message ) ;
+			}
+		}
+	}
+
+	
 	public void displayCreateTeamsPane() {
 		this.setFlagForScreen("Create Teams") ;
    		this.viewFX.setCreateTeamsPane() ;
@@ -645,6 +677,12 @@ public class Controller {
 			message = "Saved team " + team.getTeamName() ; 
 		}
 		this.viewFX.popupWindow(title, message) ;
+	}
+
+	public void displayPlayoffsSetupPane() {
+		this.setFlagForScreen("Playoffs Setup") ;
+   		ArrayList<TeamStandings> standings = computeAllStandingsForLeague(this.selectedLeague) ; 
+   		this.viewFX.setPlayoffsSetupPane(standings) ;
 	}
 
 	public void displayUpdateDivisionsPane() {
@@ -867,6 +905,7 @@ public class Controller {
 		}
 		return this.leagueChoosePane  ;
 	}
+
 
 
 }

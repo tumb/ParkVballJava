@@ -100,7 +100,16 @@ public class PaneFactory {
 		Button teamRecordButton = new Button("Team Record") ;
 		Button addPlayersButton = new Button("Add Players") ;
 		Button createTeamsButton = new Button("Create Teams") ;
+		Button playoffsSetupButton = new Button("Playoffs Setup") ;
 		Button updateDivisionsButton = new Button("Update Divisions") ;
+		
+		EventHandler<MouseEvent> playoffsSetupEvent = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				controller.displayPlayoffsSetupPane() ; 
+			}
+		} ;
+		playoffsSetupButton.addEventFilter(MouseEvent.MOUSE_CLICKED, playoffsSetupEvent) ;
 		
 		EventHandler<MouseEvent> updateDivisionsEvent = new EventHandler<MouseEvent>() {
 			@Override
@@ -189,6 +198,8 @@ public class PaneFactory {
 		y++ ;
 		homePane.add(teamRecordButton, 0, y); 
 		y++ ; 
+		homePane.add(playoffsSetupButton, 0, y) ;
+		y++ ;
 		homePane.add(addPlayersButton, 0, y) ;
 		y++ ;
 		homePane.add(createTeamsButton, 0, y) ;
@@ -225,7 +236,7 @@ public class PaneFactory {
 		EventHandler<MouseEvent> leagueSubmitEvent = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				controller.leagueSubmitButtonPress() ; 
+				System.out.println("LeaguePane submit pressed. This shouldn't happen. Fix so it doesn't.") ; 
 			}
 		} ;
 		leagueSubmitButton.addEventFilter(MouseEvent.MOUSE_CLICKED, leagueSubmitEvent) ;

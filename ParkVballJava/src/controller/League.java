@@ -7,6 +7,17 @@ public class League {
 	private int year ; // 2022 etc
 	private int numberOfDivisions ; 
 	private String divisionName ; 
+	private int databaseId ; 
+	
+	public League() {
+		
+	}
+	
+	public League(String yearString, String dayOfWeek, int divisionCount) {
+		setYear(yearString) ; 
+		this.dayOfWeek = dayOfWeek ; 
+		this.numberOfDivisions = divisionCount ; 
+	}
 	
 	public boolean isLeagueSelected() {
 		boolean isSelected = year > 0 ;
@@ -52,7 +63,7 @@ public class League {
 	}
 	
 	public String toString() {
-		return " " + this.divisionName + " division" + " for " + this.dayOfWeek + "s " + year ; 
+		return " " + this.divisionName + " division" + " for " + this.dayOfWeek + "s " + year + " has " + this.numberOfDivisions + " divisions" ; 
 	}
 
 	public boolean isValid() {
@@ -97,6 +108,14 @@ public class League {
 
 	public boolean isMissingDivisionName() {
 		return this.divisionName == null || this.divisionName.isEmpty() ;
+	}
+
+	public int getDatabaseId() {
+		return databaseId;
+	}
+
+	public void setDatabaseId(int databaseId) {
+		this.databaseId = databaseId;
 	}
 	
 }
